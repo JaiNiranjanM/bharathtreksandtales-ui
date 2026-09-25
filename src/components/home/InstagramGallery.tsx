@@ -18,7 +18,9 @@ export function InstagramGallery() {
           description="Real moments from real trips, shared by our travellers."
         />
         <a
-          href="#"
+          href="https://instagram.com/bharathtreksandtales"
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex shrink-0 items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
         >
           <InstagramIcon size={16} /> @bharathtreksandtales

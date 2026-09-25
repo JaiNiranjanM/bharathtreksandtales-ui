@@ -7,6 +7,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, MapPin, Calendar, Users as UsersIcon } from "lucide-react";
 import { categories, packages, getCategory, type CategoryId } from "@/lib/data";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,19 @@ const slides = packages.slice(0, 5);
 
 export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId | null }) {
   const category = selectedCategory ? getCategory(selectedCategory) : null;
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [date, setDate] = useState("");
+  const [travelers, setTravelers] = useState("");
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("query", query.trim());
+    if (date) params.set("date", date);
+    if (travelers.trim()) params.set("travelers", travelers.trim());
+    router.push(`/packages?${params.toString()}`);
+  }
 
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden pt-24">
@@ -26,10 +41,17 @@ export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId
           loop
           className="h-full w-full"
         >
-          {slides.map((s) => (
+          {slides.map((s, idx) => (
             <SwiperSlide key={s.id}>
               <div className="relative h-full w-full">
-                <Image src={s.image} alt={s.title} fill priority className="object-cover" sizes="100vw" />
+                <Image
+                  src={s.image}
+                  alt={s.title}
+                  fill
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  className="object-cover"
+                  sizes="100vw"
+                />
               </div>
             </SwiperSlide>
           ))}
@@ -68,7 +90,8 @@ export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId
         </motion.div>
 
         {/* search bar */}
-        <motion.div
+        <motion.form
+          onSubmit={handleSearch}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
@@ -77,6 +100,8 @@ export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId
           <div className="flex flex-1 items-center gap-2 rounded-xl bg-white/10 px-4 py-3">
             <MapPin size={16} className="text-white/70" />
             <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="Where to? Try 'Coorg' or 'Tirupati'"
               className="w-full bg-transparent text-sm text-white placeholder:text-white/50 focus:outline-none"
             />
@@ -85,20 +110,24 @@ export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId
             <Calendar size={16} className="text-white/70" />
             <input
               type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               className="w-full bg-transparent text-sm text-white focus:outline-none [color-scheme:dark]"
             />
           </div>
           <div className="flex flex-1 items-center gap-2 rounded-xl bg-white/10 px-4 py-3">
             <UsersIcon size={16} className="text-white/70" />
             <input
+              value={travelers}
+              onChange={(e) => setTravelers(e.target.value)}
               placeholder="Travellers"
               className="w-full bg-transparent text-sm text-white placeholder:text-white/50 focus:outline-none"
             />
           </div>
-          <Button size="lg" variant="saffron" className="shrink-0">
+          <Button type="submit" size="lg" variant="saffron" className="shrink-0">
             <Search size={16} /> Search
           </Button>
-        </motion.div>
+        </motion.form>
 
         {/* category quick chips */}
         <motion.div

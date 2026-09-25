@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Image from "next/image";
 import {
   MapPin,
@@ -17,11 +18,28 @@ import { Footer } from "@/components/layout/Footer";
 import { Badge } from "@/components/ui/badge";
 import { PackageCard } from "@/components/packages/PackageCard";
 import { BookingSidebar } from "@/components/packages/BookingSidebar";
-import { getPackageBySlug, getRelatedPackages, packages } from "@/lib/data";
+import { getPackageBySlug, getRelatedPackages } from "@/services/packagesService";
+import type { TravelPackage } from "@/lib/data";
 
-export function generateStaticParams() {
-  return packages.map((p) => ({ slug: p.slug }));
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const pkg = await getPackageBySlug(slug);
+    if (!pkg) return { title: "Package Not Found" };
+    return {
+      title: `${pkg.title} | Bharath Treks & Tales`,
+      description: `${pkg.title} — ${pkg.difficulty} ${pkg.duration} trip in ${pkg.location}, ${pkg.state}. ${pkg.highlights[0] ?? ""}. Book from ₹${pkg.discountPrice}/person.`,
+    };
+  } catch {
+    return { title: "Package Not Found" };
+  }
 }
+
 
 export default async function PackageDetailPage({
   params,
@@ -29,10 +47,18 @@ export default async function PackageDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const pkg = getPackageBySlug(slug);
-  if (!pkg) notFound();
 
-  const related = getRelatedPackages(pkg);
+  let pkg: TravelPackage | null = null;
+  let related: TravelPackage[] = [];
+
+  try {
+    pkg = await getPackageBySlug(slug);
+    related = await getRelatedPackages(slug);
+  } catch {
+    notFound();
+  }
+
+  if (!pkg) notFound();
 
   return (
     <>

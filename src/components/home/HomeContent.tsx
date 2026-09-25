@@ -1,15 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useAppStore } from "@/lib/store";
 import { HeroSection } from "./HeroSection";
 import { PopularDestinations } from "./PopularDestinations";
 import { TrendingPackages } from "./TrendingPackages";
-import { Stats } from "./Stats";
-import { WhyTravelWithUs } from "./WhyTravelWithUs";
-import { Testimonials } from "./Testimonials";
-import { InstagramGallery } from "./InstagramGallery";
-import { Newsletter } from "./Newsletter";
-import { FAQSection } from "./FAQSection";
+
+const Stats = dynamic(() => import("./Stats").then((m) => m.Stats), { ssr: false });
+const WhyTravelWithUs = dynamic(() => import("./WhyTravelWithUs").then((m) => m.WhyTravelWithUs), { ssr: false });
+const Testimonials = dynamic(() => import("./Testimonials").then((m) => m.Testimonials), { ssr: false });
+const InstagramGallery = dynamic(() => import("./InstagramGallery").then((m) => m.InstagramGallery), { ssr: false });
+const FAQSection = dynamic(() => import("./FAQSection").then((m) => m.FAQSection), { ssr: false });
+const Newsletter = dynamic(() => import("./Newsletter").then((m) => m.Newsletter), { ssr: false });
+
 
 export function HomeContent() {
   const selectedCategory = useAppStore((s) => s.selectedCategory);

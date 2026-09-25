@@ -6,23 +6,23 @@ import Image from "next/image";
 
 const scenes = [
   {
-    src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop",
     label: "Sunrise over Nandi Hills",
   },
   {
-    src: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=2000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=800&auto=format&fit=crop",
     label: "Temple bells at dawn",
   },
   {
-    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop",
     label: "Misty mountain trails",
   },
   {
-    src: "https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=2000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=800&auto=format&fit=crop",
     label: "Waterfalls of the Ghats",
   },
   {
-    src: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
     label: "Forest campfire nights",
   },
 ];
@@ -50,7 +50,7 @@ export function CinematicBackground() {
             src={scenes[index].src}
             alt={scenes[index].label}
             fill
-            priority={index === 0}
+            loading="lazy"
             className="object-cover"
             sizes="100vw"
           />

@@ -74,7 +74,14 @@ export function PackageCard({ pkg, index = 0 }: { pkg: TravelPackage; index?: nu
           </button>
           <button
             aria-label="Share"
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.preventDefault();
+              if (navigator.share) {
+                navigator.share({ title: pkg.title, url: `/packages/${pkg.slug}` });
+              } else {
+                navigator.clipboard.writeText(`${window.location.origin}/packages/${pkg.slug}`);
+              }
+            }}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md transition-colors hover:bg-white/40 cursor-pointer"
           >
             <Share2 size={14} />

@@ -42,7 +42,7 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2.5">
               <Image src="/btt_logo_icon.png" alt="" width={40} height={57} className="h-9 w-auto" />
               <Image
-                src="/btt_label_trimmed.png"
+                src="/btt_label.png"
                 alt="Bharath Treks & Tales"
                 width={597}
                 height={146}
@@ -54,10 +54,17 @@ export function Footer() {
               Every journey, told well.
             </p>
             <div className="mt-6 flex items-center gap-3">
-              {[InstagramIcon, FacebookIcon, YoutubeIcon].map((Icon, i) => (
+              {[
+                { Icon: InstagramIcon, href: "https://instagram.com/bharathtreksandtales" },
+                { Icon: FacebookIcon, href: "https://facebook.com/bharathtreksandtales" },
+                { Icon: YoutubeIcon, href: "https://youtube.com/@bharathtreksandtales" },
+              ].map(({ Icon, href }) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={href}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 transition-colors hover:bg-royal hover:text-white hover:border-royal"
                 >
                   <Icon size={16} />

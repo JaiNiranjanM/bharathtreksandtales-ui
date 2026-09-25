@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+body { margin: 0; padding: 20px; background: white; }
+svg { display: block; width: 1200px; height: auto; }
+</style></head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9ca3af"/>
+    </marker>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e40af"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="1" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="1600" fill="#f8fafc" rx="0"/>
+
+  <!-- Header Bar -->
+  <rect x="0" y="0" width="1200" height="60" fill="url(#headerGrad)"/>
+  <text x="600" y="38" text-anchor="middle" fill="white" font-size="22" font-weight="bold" letter-spacing="1">Bharath Treks &amp; Tales — User Flow &amp; Features</text>
+
+  <!-- ==================== ROW 1: LANDING ==================== -->
+  <text x="60" y="105" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">STEP 1: LANDING EXPERIENCE</text>
+  <line x1="60" y1="112" x2="320" y2="112" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- Hero3DIntro -->
+  <rect x="60" y="125" width="200" height="80" rx="10" fill="white" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="125" width="200" height="6" rx="10" fill="#2563eb"/>
+  <text x="160" y="150" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="bold">Hero3DIntro</text>
+  <text x="160" y="168" text-anchor="middle" fill="#64748b" font-size="10">Scroll parallax mountains</text>
+  <text x="160" y="183" text-anchor="middle" fill="#64748b" font-size="10">3D mouse tilt + temple scene</text>
+  <text x="160" y="198" text-anchor="middle" fill="#94a3b8" font-size="9">First-time visitors only</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="165" x2="310" y2="165" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LandingExperience -->
+  <rect x="320" y="125" width="200" height="80" rx="10" fill="white" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="320" y="125" width="200" height="6" rx="10" fill="#2563eb"/>
+  <text x="420" y="150" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="bold">LandingExperience</text>
+  <text x="420" y="168" text-anchor="middle" fill="#64748b" font-size="10">Pick a travel category</text>
+  <text x="420" y="183" text-anchor="middle" fill="#64748b" font-size="10">8 cards: Trekking, Spiritual...</text>
+  <text x="420" y="198" text-anchor="middle" fill="#94a3b8" font-size="9">Skip available</text>
+
+  <!-- Arrow to Home -->
+  <line x1="520" y1="165" x2="570" y2="165" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Skip arrow -->
+  <path d="M 420 205 Q 420 230 590 230" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowGray)"/>
+  <text x="500" y="225" text-anchor="middle" fill="#9ca3af" font-size="9">skip</text>
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <rect x="580" y="120" width="560" height="300" rx="12" fill="white" stroke="#1e40af" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="580" y="120" width="560" height="38" rx="12" fill="#1e40af"/>
+  <rect x="580" y="146" width="560" height="12" fill="#1e40af"/>
+  <text x="860" y="146" text-anchor="middle" fill="white" font-size="15" font-weight="bold">HOME — /</text>
+
+  <!-- Home Sections -->
+  <rect x="600" y="170" width="165" height="70" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="682" y="192" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">HeroSection</text>
+  <text x="682" y="208" text-anchor="middle" fill="#64748b" font-size="9">Image carousel + Search bar</text>
+  <text x="682" y="222" text-anchor="middle" fill="#64748b" font-size="9">Category quick chips</text>
+  <text x="682" y="234" text-anchor="middle" fill="#94a3b8" font-size="8">Search → /packages?query</text>
+
+  <rect x="780" y="170" width="165" height="70" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="862" y="192" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">PopularDestinations</text>
+  <text x="862" y="208" text-anchor="middle" fill="#64748b" font-size="9">5 state cards (TN, KA, KL...)</text>
+  <text x="862" y="222" text-anchor="middle" fill="#64748b" font-size="9">Images + trip count</text>
+  <text x="862" y="234" text-anchor="middle" fill="#94a3b8" font-size="8">Click → /packages?state=X</text>
+
+  <rect x="960" y="170" width="165" height="70" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="1042" y="192" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">TrendingPackages x4</text>
+  <text x="1042" y="208" text-anchor="middle" fill="#64748b" font-size="9">Weekend, Spiritual, Trekking</text>
+  <text x="1042" y="222" text-anchor="middle" fill="#64748b" font-size="9">+ User selected category</text>
+  <text x="1042" y="234" text-anchor="middle" fill="#94a3b8" font-size="8">"View All" → /packages</text>
+
+  <rect x="600" y="250" width="125" height="48" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="662" y="270" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">Stats</text>
+  <text x="662" y="286" text-anchor="middle" fill="#64748b" font-size="9">4 animated counters</text>
+
+  <rect x="740" y="250" width="125" height="48" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="802" y="270" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">WhyTravelWithUs</text>
+  <text x="802" y="286" text-anchor="middle" fill="#64748b" font-size="9">6 value props</text>
+
+  <rect x="880" y="250" width="125" height="48" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="942" y="270" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">Testimonials</text>
+  <text x="942" y="286" text-anchor="middle" fill="#64748b" font-size="9">4 review cards</text>
+
+  <rect x="1020" y="250" width="105" height="48" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="1072" y="270" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="bold">Gallery</text>
+  <text x="1072" y="286" text-anchor="middle" fill="#64748b" font-size="9">8 images</text>
+
+  <rect x="600" y="308" width="125" height="40" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="662" y="333" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">FAQ</text>
+
+  <rect x="740" y="308" width="125" height="40" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="802" y="333" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Newsletter</text>
+
+  <rect x="880" y="308" width="125" height="40" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="942" y="333" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Instagram</text>
+
+  <rect x="1020" y="308" width="105" height="40" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="1072" y="333" text-anchor="middle" fill="#64748b" font-size="10">+ Header</text>
+  <text x="1072" y="344" text-anchor="middle" fill="#64748b" font-size="9">+ Footer</text>
+
+  <text x="860" y="395" text-anchor="middle" fill="#94a3b8" font-size="10">API: GET /api/packages (server-side rendered)</text>
+  <text x="860" y="410" text-anchor="middle" fill="#94a3b8" font-size="10">State: Zustand (selectedCategory, hasEnteredSite)</text>
+
+  <!-- ==================== ROW 2: PACKAGES & EXPLORE ==================== -->
+  <text x="60" y="460" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">STEP 2: BROWSE TRIPS</text>
+  <line x1="60" y1="467" x2="290" y2="467" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- Packages Listing -->
+  <rect x="60" y="480" width="310" height="180" rx="12" fill="white" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="60" y="480" width="310" height="38" rx="12" fill="#2563eb"/>
+  <rect x="60" y="506" width="310" height="12" fill="#2563eb"/>
+  <text x="215" y="506" text-anchor="middle" fill="white" font-size="14" font-weight="bold">/packages</text>
+
+  <rect x="75" y="530" width="135" height="50" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="142" y="552" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Search Bar</text>
+  <text x="142" y="568" text-anchor="middle" fill="#64748b" font-size="9">Text search packages</text>
+
+  <rect x="220" y="530" width="135" height="50" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="287" y="552" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Sidebar Filters</text>
+  <text x="287" y="568" text-anchor="middle" fill="#64748b" font-size="9">Category, State, Difficulty</text>
+
+  <rect x="75" y="590" width="135" height="40" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="142" y="615" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Duration, Budget</text>
+
+  <rect x="220" y="590" width="135" height="40" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="287" y="615" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">Weekend toggle</text>
+
+  <rect x="75" y="640" width="280" height="12" rx="4" fill="#e2e8f0"/>
+  <text x="215" y="650" text-anchor="middle" fill="#64748b" font-size="9">API: GET /api/packages?category=&amp;state=&amp;difficulty=</text>
+
+  <!-- Arrow: Home → Packages -->
+  <path d="M 580 340 Q 540 340 540 400 Q 540 460 370 500" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="500" y="420" fill="#2563eb" font-size="9" transform="rotate(-65,500,420)">HeroSection search / Category / "View All"</text>
+
+  <!-- Arrow: Packages → Detail -->
+  <line x1="215" y1="660" x2="215" y2="710" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="230" y="690" fill="#2563eb" font-size="9">PackageCard click</text>
+
+  <!-- Package Detail -->
+  <rect x="60" y="720" width="310" height="260" rx="12" fill="white" stroke="#ea580c" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="60" y="720" width="310" height="38" rx="12" fill="#ea580c"/>
+  <rect x="60" y="746" width="310" height="12" fill="#ea580c"/>
+  <text x="215" y="746" text-anchor="middle" fill="white" font-size="14" font-weight="bold">/packages/[slug]</text>
+
+  <rect x="75" y="768" width="135" height="45" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="142" y="788" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Hero + Gallery</text>
+  <text x="142" y="803" text-anchor="middle" fill="#64748b" font-size="9">Image carousel</text>
+
+  <rect x="220" y="768" width="135" height="45" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="287" y="788" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Quick Facts</text>
+  <text x="287" y="803" text-anchor="middle" fill="#64748b" font-size="9">Duration, Altitude, Weather</text>
+
+  <rect x="75" y="822" width="135" height="45" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="142" y="842" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Itinerary</text>
+  <text x="142" y="857" text-anchor="middle" fill="#64748b" font-size="9">Day-by-day timeline</text>
+
+  <rect x="220" y="822" width="135" height="45" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="287" y="842" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Inclusions</text>
+  <text x="287" y="857" text-anchor="middle" fill="#64748b" font-size="9">What's included / not</text>
+
+  <rect x="75" y="876" width="135" height="35" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="142" y="898" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Things to Carry</text>
+
+  <rect x="220" y="876" width="135" height="35" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="287" y="898" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Difficulty Meter</text>
+
+  <!-- Booking Sidebar highlight -->
+  <rect x="75" y="920" width="280" height="48" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="215" y="942" text-anchor="middle" fill="#166534" font-size="12" font-weight="bold">BookingSidebar (Sticky)</text>
+  <text x="215" y="958" text-anchor="middle" fill="#166534" font-size="9">Date | Pickup | Seats | Coupon | Price | Book Now</text>
+
+  <text x="215" y="978" text-anchor="middle" fill="#94a3b8" font-size="9">API: GET /api/packages/:slug + GET /related</text>
+
+  <!-- ==================== EXPLORE MAP ==================== -->
+  <rect x="420" y="480" width="280" height="180" rx="12" fill="white" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="420" y="480" width="280" height="38" rx="12" fill="#7c3aed"/>
+  <rect x="420" y="506" width="280" height="12" fill="#7c3aed"/>
+  <text x="560" y="506" text-anchor="middle" fill="white" font-size="14" font-weight="bold">/explore</text>
+
+  <rect x="435" y="530" width="120" height="50" rx="6" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="495" y="552" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="bold">IndiaMap</text>
+  <text x="495" y="568" text-anchor="middle" fill="#64748b" font-size="9">Interactive SVG</text>
+
+  <rect x="565" y="530" width="120" height="50" rx="6" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="625" y="552" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="bold">State Results</text>
+  <text x="625" y="568" text-anchor="middle" fill="#64748b" font-size="9">Packages for state</text>
+
+  <rect x="435" y="590" width="250" height="35" rx="6" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="560" y="612" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="bold">5 States: TN, KA, KL, AP, MH</text>
+
+  <text x="560" y="650" text-anchor="middle" fill="#94a3b8" font-size="9">API: GET /api/explore/states + /states/:state/summary</text>
+
+  <!-- Arrow: Home → Explore -->
+  <path d="M 860 420 Q 860 440 700 480" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="800" y="445" fill="#7c3aed" font-size="9">Header nav "Explore Map"</text>
+
+  <!-- Arrow: Explore → Package Detail -->
+  <path d="M 560 660 Q 560 690 370 720" stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="480" y="685" fill="#2563eb" font-size="9">StateResults → PackageCard</text>
+
+  <!-- ==================== ROW 3: PAST TRIPS ==================== -->
+  <text x="60" y="1020" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">STEP 3: PAST TRIPS</text>
+  <line x1="60" y1="1027" x2="260" y2="1027" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- Past Trips Listing -->
+  <rect x="60" y="1040" width="260" height="120" rx="12" fill="white" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="60" y="1040" width="260" height="38" rx="12" fill="#16a34a"/>
+  <rect x="60" y="1066" width="260" height="12" fill="#16a34a"/>
+  <text x="190" y="1066" text-anchor="middle" fill="white" font-size="14" font-weight="bold">/past-trips</text>
+
+  <rect x="75" y="1090" width="110" height="30" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="130" y="1110" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">PastTripCard</text>
+
+  <rect x="195" y="1090" width="110" height="30" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="250" y="1110" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">Grid listing</text>
+
+  <text x="190" y="1150" text-anchor="middle" fill="#94a3b8" font-size="9">API: GET /api/completed-trips</text>
+
+  <!-- Arrow: Past Trips → Detail -->
+  <line x1="190" y1="1160" x2="190" y2="1180" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Past Trip Detail -->
+  <rect x="60" y="1190" width="260" height="140" rx="12" fill="white" stroke="#ea580c" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="60" y="1190" width="260" height="38" rx="12" fill="#ea580c"/>
+  <rect x="60" y="1216" width="260" height="12" fill="#ea580c"/>
+  <text x="190" y="1216" text-anchor="middle" fill="white" font-size="14" font-weight="bold">/past-trips/[slug]</text>
+
+  <rect x="75" y="1240" width="110" height="30" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="130" y="1260" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Hero + Gallery</text>
+
+  <rect x="195" y="1240" width="110" height="30" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="250" y="1260" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">Day-by-day Itin.</text>
+
+  <rect x="75" y="1280" width="230" height="30" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="190" y="1300" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">Related trips + CTA → /packages</text>
+
+  <text x="190" y="1325" text-anchor="middle" fill="#94a3b8" font-size="9">API: GET /api/completed-trips/:slug</text>
+
+  <!-- Arrow: Home → Past Trips -->
+  <path d="M 580 410 Q 420 410 420 1040 Q 420 1050 320 1050" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="440" y="730" fill="#16a34a" font-size="9" transform="rotate(-90,440,730)">Header "Past Trips"</text>
+
+  <!-- ==================== ROW 4: AUTH ==================== -->
+  <text x="760" y="460" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">AUTH FLOW</text>
+  <line x1="760" y1="467" x2="870" y2="467" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- Login -->
+  <rect x="760" y="480" width="200" height="100" rx="10" fill="white" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="760" y="480" width="200" height="30" rx="10" fill="#2563eb"/>
+  <rect x="760" y="500" width="200" height="10" fill="#2563eb"/>
+  <text x="860" y="500" text-anchor="middle" fill="white" font-size="13" font-weight="bold">/login</text>
+  <text x="860" y="528" text-anchor="middle" fill="#1e293b" font-size="10">Email + Password form</text>
+  <text x="860" y="545" text-anchor="middle" fill="#64748b" font-size="9">POST /api/auth/login</text>
+  <text x="860" y="562" text-anchor="middle" fill="#64748b" font-size="9">→ setAuth() → redirect /</text>
+  <text x="860" y="575" text-anchor="middle" fill="#2563eb" font-size="9">"Sign up" link below</text>
+
+  <!-- Signup -->
+  <rect x="990" y="480" width="200" height="100" rx="10" fill="white" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="990" y="480" width="200" height="30" rx="10" fill="#2563eb"/>
+  <rect x="990" y="500" width="200" height="10" fill="#2563eb"/>
+  <text x="1090" y="500" text-anchor="middle" fill="white" font-size="13" font-weight="bold">/signup</text>
+  <text x="1090" y="528" text-anchor="middle" fill="#1e293b" font-size="10">Step 1: Name, Email, Password</text>
+  <text x="1090" y="545" text-anchor="middle" fill="#1e293b" font-size="10">Step 2: Role, Phone, Location</text>
+  <text x="1090" y="562" text-anchor="middle" fill="#64748b" font-size="9">POST /api/auth/register</text>
+  <text x="1090" y="575" text-anchor="middle" fill="#2563eb" font-size="9">"Sign in" link below</text>
+
+  <!-- Profile -->
+  <rect x="760" y="600" width="200" height="90" rx="10" fill="white" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="760" y="600" width="200" height="30" rx="10" fill="#16a34a"/>
+  <rect x="760" y="620" width="200" height="10" fill="#16a34a"/>
+  <text x="860" y="620" text-anchor="middle" fill="white" font-size="13" font-weight="bold">/profile</text>
+  <text x="860" y="648" text-anchor="middle" fill="#1e293b" font-size="10">Edit: Role, Phone, Location</text>
+  <text x="860" y="665" text-anchor="middle" fill="#64748b" font-size="9">PUT /api/auth/profile (auth)</text>
+  <text x="860" y="682" text-anchor="middle" fill="#dc2626" font-size="9">Auth guard: redirect if not logged in</text>
+
+  <!-- Wishlist -->
+  <rect x="990" y="600" width="200" height="90" rx="10" fill="white" stroke="#ec4899" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="990" y="600" width="200" height="30" rx="10" fill="#ec4899"/>
+  <rect x="990" y="620" width="200" height="10" fill="#ec4899"/>
+  <text x="1090" y="620" text-anchor="middle" fill="white" font-size="13" font-weight="bold">/dashboard/wishlist</text>
+  <text x="1090" y="648" text-anchor="middle" fill="#1e293b" font-size="10">Saved packages from Zustand</text>
+  <text x="1090" y="665" text-anchor="middle" fill="#64748b" font-size="9">Heart icon on PackageCard</text>
+  <text x="1090" y="682" text-anchor="middle" fill="#64748b" font-size="9">Persisted to localStorage</text>
+
+  <!-- Auth Arrows -->
+  <line x1="860" y1="580" x2="860" y2="598" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="960" y1="580" x2="960" y2="598" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow: Home → Login -->
+  <path d="M 1140 420 Q 1140 450 960 478" stroke="#2563eb" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="1070" y="450" fill="#2563eb" font-size="9">Header "Login"</text>
+
+  <!-- ==================== ROW 5: BOOKING ==================== -->
+  <text x="760" y="730" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">BOOKING FLOW</text>
+  <line x1="760" y1="737" x2="900" y2="737" stroke="#2563eb" stroke-width="1"/>
+
+  <rect x="760" y="750" width="430" height="180" rx="12" fill="white" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="760" y="750" width="430" height="38" rx="12" fill="#16a34a"/>
+  <rect x="760" y="776" width="430" height="12" fill="#16a34a"/>
+  <text x="975" y="776" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Booking Modal</text>
+
+  <rect x="775" y="798" width="85" height="45" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="817" y="818" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">1. Date</text>
+  <text x="817" y="835" text-anchor="middle" fill="#64748b" font-size="9">5 options</text>
+
+  <rect x="870" y="798" width="85" height="45" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="912" y="818" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">2. Pickup</text>
+  <text x="912" y="835" text-anchor="middle" fill="#64748b" font-size="9">Dropdown</text>
+
+  <rect x="965" y="798" width="85" height="45" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="1007" y="818" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">3. Seats</text>
+  <text x="1007" y="835" text-anchor="middle" fill="#64748b" font-size="9">+/- counter</text>
+
+  <rect x="1060" y="798" width="115" height="45" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="1117" y="818" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">4. Coupon</text>
+  <text x="1117" y="835" text-anchor="middle" fill="#64748b" font-size="9">API validation</text>
+
+  <rect x="775" y="855" width="395" height="30" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="972" y="875" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold">5. Price Breakdown → Book Now</text>
+
+  <rect x="775" y="895" width="395" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="972" y="911" text-anchor="middle" fill="#1e40af" font-size="9">Form: Name, Email, Phone (10-digit), Special Requests</text>
+
+  <text x="975" y="928" text-anchor="middle" fill="#94a3b8" font-size="9">API: POST /api/coupons/validate + POST /api/bookings</text>
+
+  <!-- Arrow: Booking → Confirmation -->
+  <line x1="975" y1="930" x2="975" y2="950" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Confirmation -->
+  <rect x="825" y="955" width="300" height="55" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <text x="975" y="980" text-anchor="middle" fill="#166534" font-size="13" font-weight="bold">Booking Confirmation</text>
+  <text x="975" y="998" text-anchor="middle" fill="#166534" font-size="10">Ref number, trip details, total amount</text>
+
+  <!-- Arrow: Detail → Booking -->
+  <path d="M 370 810 Q 540 810 540 850 Q 540 850 758 850" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="540" y="800" fill="#16a34a" font-size="9" transform="rotate(-90,540,800)">BookingSidebar "Book Now"</text>
+
+  <!-- ==================== STATIC PAGES ==================== -->
+  <text x="420" y="1020" fill="#1e40af" font-size="14" font-weight="bold" letter-spacing="1.5">STATIC PAGES</text>
+  <line x1="420" y1="1027" x2="560" y2="1027" stroke="#2563eb" stroke-width="1"/>
+
+  <rect x="420" y="1040" width="120" height="55" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="1062" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/about</text>
+  <text x="480" y="1078" text-anchor="middle" fill="#64748b" font-size="9">Mission, Values</text>
+  <text x="480" y="1090" text-anchor="middle" fill="#64748b" font-size="9">Contact info</text>
+
+  <rect x="555" y="1040" width="120" height="55" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="615" y="1062" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/blog</text>
+  <text x="615" y="1078" text-anchor="middle" fill="#64748b" font-size="9">4 blog cards</text>
+  <text x="615" y="1090" text-anchor="middle" fill="#64748b" font-size="9">No detail pages</text>
+
+  <rect x="690" y="1040" width="120" height="55" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="750" y="1062" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/careers</text>
+  <text x="750" y="1078" text-anchor="middle" fill="#64748b" font-size="9">3 job openings</text>
+  <text x="750" y="1090" text-anchor="middle" fill="#64748b" font-size="9">mailto: link</text>
+
+  <rect x="825" y="1040" width="120" height="55" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="885" y="1062" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/contact</text>
+  <text x="885" y="1078" text-anchor="middle" fill="#64748b" font-size="9">Form (simulated)</text>
+  <text x="885" y="1090" text-anchor="middle" fill="#64748b" font-size="9">Office hours</text>
+
+  <rect x="960" y="1040" width="120" height="55" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1020" y="1062" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/faq</text>
+  <text x="1020" y="1078" text-anchor="middle" fill="#64748b" font-size="9">7 accordion items</text>
+  <text x="1020" y="1090" text-anchor="middle" fill="#64748b" font-size="9">Hardcoded Q&A</text>
+
+  <rect x="420" y="1110" width="120" height="40" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="1135" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/not-found</text>
+
+  <rect x="555" y="1110" width="120" height="40" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="615" y="1135" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/policy/privacy</text>
+
+  <rect x="690" y="1110" width="120" height="40" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="750" y="1135" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/policy/terms</text>
+
+  <rect x="825" y="1110" width="130" height="40" rx="8" fill="white" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="890" y="1135" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold">/policy/cancellation</text>
+
+  <!-- ==================== SUMMARY BAR ==================== -->
+  <rect x="60" y="1180" width="1080" height="70" rx="10" fill="#1e40af" filter="url(#shadow)"/>
+  <text x="600" y="1208" text-anchor="middle" fill="white" font-size="15" font-weight="bold" letter-spacing="1">PROJECT AT A GLANCE</text>
+  <text x="175" y="1235" text-anchor="middle" fill="#93c5fd" font-size="12">18 Pages</text>
+  <text x="350" y="1235" text-anchor="middle" fill="#93c5fd" font-size="12">31 Components</text>
+  <text x="535" y="1235" text-anchor="middle" fill="#93c5fd" font-size="12">8 Services (17 functions)</text>
+  <text x="760" y="1235" text-anchor="middle" fill="#93c5fd" font-size="12">15 API Endpoints</text>
+  <text x="970" y="1235" text-anchor="middle" fill="#93c5fd" font-size="12">Zustand Store</text>
+
+  <!-- Footer -->
+  <text x="600" y="1285" text-anchor="middle" fill="#94a3b8" font-size="10">Next.js 15 + React 19 + Tailwind CSS 4 + Express.js + SQLite</text>
+  <text x="600" y="1300" text-anchor="middle" fill="#cbd5e1" font-size="11" font-weight="bold">Bharath Treks &amp; Tales — Travel Booking Platform</text>
+</svg>
+</body>
+</html>

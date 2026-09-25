@@ -1,11 +1,65 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, Calendar, Sparkles } from "lucide-react";
-import { getPackagesByState, getStateSummary } from "@/lib/data";
+import {
+  getPackagesByState as getLocalPackagesByState,
+  getStateSummary as getLocalStateSummary,
+  type TravelPackage,
+} from "@/lib/data";
+import { getPackages } from "@/services/packagesService";
+import {
+  getStateSummary as getApiStateSummary,
+  type StateSummary,
+} from "@/services/exploreService";
 import { PackageCard } from "@/components/packages/PackageCard";
 
 export function StateResultsPanel({ state }: { state: string | null }) {
+  const localTrips = state ? getLocalPackagesByState(state) : [];
+  const localSummary = state
+    ? getLocalStateSummary(state)
+    : { tripCount: 0, temples: [], treks: [], upcomingDates: [] };
+
+  const [apiData, setApiData] = useState<{
+    state: string;
+    trips: TravelPackage[];
+    summary: StateSummary;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!state) return;
+
+    let active = true;
+    Promise.all([
+      getPackages({ state }).catch(() => null),
+      getApiStateSummary(state).catch(() => null),
+    ]).then(([apiPackages, apiSummary]) => {
+      if (!active) return;
+      if (apiPackages || apiSummary) {
+        setApiData({
+          state,
+          trips: apiPackages ?? getLocalPackagesByState(state),
+          summary:
+            apiSummary ??
+            getLocalStateSummary(state) ?? {
+              tripCount: 0,
+              temples: [],
+              treks: [],
+              upcomingDates: [],
+            },
+        });
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [state]);
+
+  const trips = apiData && apiData.state === state ? apiData.trips : localTrips;
+  const summary = apiData && apiData.state === state ? apiData.summary : localSummary;
+
   if (!state) {
     return (
       <motion.div
@@ -22,9 +76,6 @@ export function StateResultsPanel({ state }: { state: string | null }) {
       </motion.div>
     );
   }
-
-  const trips = getPackagesByState(state);
-  const summary = getStateSummary(state);
 
   return (
     <AnimatePresence mode="wait">

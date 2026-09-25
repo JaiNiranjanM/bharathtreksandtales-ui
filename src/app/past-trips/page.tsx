@@ -1,10 +1,24 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PastTripCard } from "@/components/past-trips/PastTripCard";
+import { getCompletedTrips } from "@/services/completedTripsService";
 import { getSortedCompletedTrips } from "@/lib/completedTrips";
+import type { CompletedTrip } from "@/lib/completedTrips";
 
-export default function PastTripsPage() {
-  const trips = getSortedCompletedTrips();
+export const metadata: Metadata = {
+  title: "Past Trips | Bharath Treks & Tales",
+  description:
+    "A look back at completed treks, temple pilgrimages and adventures with Bharath Treks & Tales.",
+};
+
+export default async function PastTripsPage() {
+  let trips: CompletedTrip[] = [];
+  try {
+    trips = await getCompletedTrips();
+  } catch {
+    trips = getSortedCompletedTrips();
+  }
 
   return (
     <>

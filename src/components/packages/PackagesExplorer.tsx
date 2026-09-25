@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import {
   categories,
-  packages,
+  packages as localPackages,
   states,
   difficulties,
   type CategoryId,
   type Difficulty,
+  type TravelPackage,
 } from "@/lib/data";
 import { PackageCard } from "./PackageCard";
 import { cn } from "@/lib/utils";
@@ -21,10 +22,21 @@ const durationOptions = [
   { label: "4+ Days", test: (d: number) => d >= 4 },
 ];
 
-export function PackagesExplorer() {
-  const searchParams = useSearchParams();
+type PkgWithDates = TravelPackage & { availableDates?: string[] };
 
-  const [query, setQuery] = useState("");
+export function PackagesExplorer({ initialPackages }: { initialPackages?: TravelPackage[] } = {}) {
+  // Remounted (via key) whenever the URL filter params change, so
+  // searchParams can be read once as initial state — no sync effect needed.
+  const searchParams = useSearchParams();
+  const rawSource = initialPackages && initialPackages.length > 0 ? initialPackages : localPackages;
+  const sourcePackages = rawSource as PkgWithDates[];
+
+  const initialQuery = searchParams.get("query") || "";
+  const initialDate = searchParams.get("date") || "";
+  const initialTravelers = searchParams.get("travelers") || "";
+  const [query, setQuery] = useState(initialQuery);
+  const [dateFilter, setDateFilter] = useState(initialDate);
+  const [travelersFilter, setTravelersFilter] = useState(initialTravelers);
   const [category, setCategory] = useState<CategoryId | "all">(
     (searchParams.get("category") as CategoryId) || "all"
   );
@@ -36,7 +48,7 @@ export function PackagesExplorer() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    return packages.filter((p) => {
+    return sourcePackages.filter((p) => {
       if (query && !p.title.toLowerCase().includes(query.toLowerCase()) && !p.location.toLowerCase().includes(query.toLowerCase())) {
         return false;
       }
@@ -49,18 +61,28 @@ export function PackagesExplorer() {
       }
       if (p.discountPrice > maxBudget) return false;
       if (weekendOnly && !p.weekend) return false;
+      if (travelersFilter && !isNaN(Number(travelersFilter)) && Number(travelersFilter) > 0) {
+        if (p.seatsLeft < Number(travelersFilter)) return false;
+      }
+      // date filter client fallback: if package has availableDates and dateFilter not in it, hide
+      if (dateFilter && Array.isArray(p.availableDates) && p.availableDates.length > 0) {
+        if (!p.availableDates.includes(dateFilter)) return false;
+      }
       return true;
     });
-  }, [query, category, state, difficulty, duration, maxBudget, weekendOnly]);
+  }, [sourcePackages, query, category, state, difficulty, duration, maxBudget, weekendOnly, travelersFilter, dateFilter]);
 
   function resetFilters() {
     setQuery("");
+    setDateFilter("");
+    setTravelersFilter("");
     setCategory("all");
     setState("all");
     setDifficulty("all");
     setDuration("all");
     setMaxBudget(10000);
     setWeekendOnly(false);
+    if (typeof window !== 'undefined') window.history.replaceState(null, '', '/packages');
   }
 
   return (
@@ -196,6 +218,12 @@ export function PackagesExplorer() {
         </aside>
 
         <div>
+          {(dateFilter || travelersFilter) && (
+            <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
+              {dateFilter && <span className="rounded-full bg-royal/10 px-3 py-1 text-royal">Date: {dateFilter} <button onClick={() => setDateFilter("")} className="ml-1 font-bold">×</button></span>}
+              {travelersFilter && <span className="rounded-full bg-royal/10 px-3 py-1 text-royal">Travellers: {travelersFilter} <button onClick={() => setTravelersFilter("")} className="ml-1 font-bold">×</button></span>}
+            </div>
+          )}
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-foreground/15 py-20 text-center">
               <p className="text-lg font-medium">No trips match your filters</p>

@@ -8,14 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PastTripCard } from "@/components/past-trips/PastTripCard";
 import {
-  completedTrips,
-  getCompletedTripBySlug,
+  getCompletedTripBySlug as getApiCompletedTripBySlug,
+  getCompletedTrips as getApiCompletedTrips,
+} from "@/services/completedTripsService";
+import {
+  getCompletedTripBySlug as getLocalCompletedTripBySlug,
   getSortedCompletedTrips,
+  type CompletedTrip,
 } from "@/lib/completedTrips";
-
-export function generateStaticParams() {
-  return completedTrips.map((t) => ({ slug: t.slug }));
-}
 
 export default async function PastTripDetailPage({
   params,
@@ -23,10 +23,21 @@ export default async function PastTripDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const trip = getCompletedTripBySlug(slug);
+
+  let trip: CompletedTrip | null = null;
+  let allTrips: CompletedTrip[] = [];
+
+  try {
+    trip = await getApiCompletedTripBySlug(slug);
+    allTrips = await getApiCompletedTrips();
+  } catch {
+    trip = getLocalCompletedTripBySlug(slug) ?? null;
+    allTrips = getSortedCompletedTrips();
+  }
+
   if (!trip) notFound();
 
-  const related = getSortedCompletedTrips()
+  const related = allTrips
     .filter((t) => t.id !== trip.id)
     .slice(0, 3);
 

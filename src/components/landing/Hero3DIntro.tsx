@@ -26,20 +26,20 @@ interface MountainSpec {
 // "ridge behind ridge" silhouette instead of one image poking above another
 // at random. Every layer spans the full viewport width — no gaps at the edges.
 const MOUNTAIN_LAYERS: MountainSpec[] = [
-  { src: "/night_mountain_2_trimmed.png", opacity: 0.45, brightness: 0.55, zIndex: 1, widthPercent: 102, offsetPercent: 0 },
-  { src: "/night_mountain_6_trimmed.png", opacity: 0.6, brightness: 0.65, zIndex: 2, widthPercent: 102, offsetPercent: 0 },
-  { src: "/night_mountain_5_trimmed.png", opacity: 0.75, brightness: 0.75, zIndex: 3, widthPercent: 102, offsetPercent: 0 },
-  { src: "/night_mountain_3_trimmed.png", opacity: 0.88, brightness: 0.85, zIndex: 4, widthPercent: 102, offsetPercent: 0 },
-  { src: "/night_mountain_4_trimmed.png", opacity: 1, brightness: 0.9, zIndex: 5, widthPercent: 102, offsetPercent: 0 },
+  { src: "/night_mountain_2.png", opacity: 0.45, brightness: 0.55, zIndex: 1, widthPercent: 102, offsetPercent: 0 },
+  { src: "/night_mountain_6.png", opacity: 0.6, brightness: 0.65, zIndex: 2, widthPercent: 102, offsetPercent: 0 },
+  { src: "/night_mountain_5.png", opacity: 0.75, brightness: 0.75, zIndex: 3, widthPercent: 102, offsetPercent: 0 },
+  { src: "/night_mountain_3.png", opacity: 0.88, brightness: 0.85, zIndex: 4, widthPercent: 102, offsetPercent: 0 },
+  { src: "/night_mountain_4.png", opacity: 1, brightness: 0.9, zIndex: 5, widthPercent: 102, offsetPercent: 0 },
 ];
 
 const devotees = [
-  "/devotees_1_trimmed.png",
-  "/devotees_2_trimmed.png",
-  "/devotees_3_trimmed.png",
-  "/devotees_4_trimmed.png",
-  "/devotees_5_trimmed.png",
-  "/devotees_6_trimmed.png",
+  "/devotees_1.png",
+  "/devotees_2.png",
+  "/devotees_3.png",
+  "/devotees_4.png",
+  "/devotees_5.png",
+  "/devotees_6.png",
 ];
 
 const ORBIT_RADIUS_X = 230;
@@ -229,6 +229,7 @@ export function Hero3DIntro() {
                     height={600}
                     className="h-auto w-full object-contain object-bottom"
                     priority={i === MOUNTAIN_LAYERS.length - 1}
+                    loading={i === MOUNTAIN_LAYERS.length - 1 ? "eager" : "lazy"}
                   />
                 </motion.div>
               </div>
@@ -245,10 +246,11 @@ export function Hero3DIntro() {
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Image
-                  src="/night_climbing_trimmed.png"
+                  src="/night_climbing.png"
                   alt="Trekker climbing the mountain"
                   width={400}
                   height={520}
+                  loading="lazy"
                   className="h-20 w-auto object-contain drop-shadow-[0_6px_12px_rgba(0,0,0,0.5)] sm:h-24 md:h-28"
                 />
               </motion.div>
@@ -295,12 +297,11 @@ export function Hero3DIntro() {
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             >
               <Image
-                src="/temple_trimmed.png"
+                src="/temple.png"
                 alt="Temple"
                 width={900}
                 height={900}
-                quality={90}
-                priority
+                loading="lazy"
                 className="h-16 w-16 object-contain sm:h-20 sm:w-20 md:h-24 md:w-24"
               />
             </motion.div>
@@ -347,6 +348,7 @@ export function Hero3DIntro() {
                       alt="Devotee dancing near the temple"
                       width={260}
                       height={420}
+                      loading="lazy"
                       className="h-12 w-auto object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] sm:h-14 md:h-16"
                     />
                   </motion.div>
