@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Minus, Plus, ShieldCheck, Tag } from "lucide-react";
+import { FileDown, Minus, Phone, Plus, ShieldCheck, Tag } from "lucide-react";
 import { getDepartureLabels, type TravelPackage } from "@/lib/data";
 import { formatINR, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/icons/SocialIcons";
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_E164, whatsappLink } from "@/lib/contact";
 
 export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
   const dates = getDepartureLabels(pkg);
@@ -151,6 +153,34 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
       <Button variant="saffron" size="lg" className="mt-5 w-full">
         Book Now
       </Button>
+
+      <div className="mt-3 space-y-2.5">
+        <a
+          href={whatsappLink(
+            `Hi Bharath Treks & Tales, I'd like to enquire about "${pkg.title}"${
+              pkg.duration ? ` (${pkg.duration})` : ""
+            }${selectedDate ? ` on ${selectedDate}` : ""} for ${seats} ${seats === 1 ? "person" : "people"}.`
+          )}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] text-sm font-semibold text-white shadow-lg shadow-[#25D366]/25 transition-all hover:-translate-y-0.5 hover:brightness-105"
+        >
+          <WhatsAppIcon size={18} /> Enquire on WhatsApp
+        </a>
+        <a
+          href={`tel:${CONTACT_PHONE_E164}`}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-foreground/15 text-sm font-semibold transition-colors hover:bg-foreground/5"
+        >
+          <Phone size={16} /> {CONTACT_PHONE_DISPLAY}
+        </a>
+        <a
+          href={`/api/packages/${pkg.slug}/itinerary`}
+          download
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-foreground/25 text-sm font-semibold opacity-80 transition-all hover:bg-foreground/5 hover:opacity-100"
+        >
+          <FileDown size={16} /> Download Itinerary
+        </a>
+      </div>
 
       <p className="mt-3 flex items-center justify-center gap-1.5 text-xs opacity-60">
         <ShieldCheck size={13} /> Secure payments via UPI, Cards & Netbanking
