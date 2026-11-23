@@ -106,3 +106,130 @@ body {
   background-clip: text;
   color: transparent;
 }
+
+/* ---------- Hero scene: night (dark theme) <-> day (light theme) ---------- */
+:root {
+  --mtn-hue: 0deg;
+  --mtn-sat: 1;
+  --mtn-contrast: 1;
+  --mtn-boost: 1;
+}
+:root[data-theme="light"] {
+  --mtn-hue: -100deg;
+  --mtn-sat: 1.45;
+  --mtn-contrast: 0.68;
+  --mtn-boost: 1.85;
+}
+
+/* mountain layers tint themselves through these variables, so the change animates */
+.hero-mtn {
+  transition: filter 0.9s ease;
+}
+
+.hero-sky-day {
+  opacity: 0;
+  background: linear-gradient(to bottom, #2e8de0 0%, #62b6f0 38%, #a9dcf8 68%, #fff0d2 100%);
+  transition: opacity 0.9s ease;
+}
+:root[data-theme="light"] .hero-sky-day {
+  opacity: 1;
+}
+
+.hero-stars {
+  transition: opacity 0.9s ease;
+}
+:root[data-theme="light"] .hero-stars {
+  opacity: 0;
+}
+
+.hero-moon {
+  transition: opacity 0.7s ease, transform 0.9s ease;
+}
+:root[data-theme="light"] .hero-moon {
+  opacity: 0;
+  transform: translateY(70px) scale(0.8);
+}
+
+.hero-sun {
+  opacity: 0;
+  transform: translateY(70px) scale(0.8);
+  transition: opacity 0.9s ease 0.15s, transform 1s ease 0.15s;
+}
+:root[data-theme="light"] .hero-sun {
+  opacity: 1;
+  transform: none;
+}
+.hero-sun-disc {
+  background: radial-gradient(circle at 35% 35%, #fffbe3 0%, #ffe46e 42%, #ffb02e 100%);
+  box-shadow: 0 0 50px 16px rgba(255, 205, 70, 0.6), 0 0 130px 55px rgba(255, 170, 40, 0.28);
+}
+.hero-sun-glow {
+  background: radial-gradient(circle, rgba(255, 236, 150, 0.75) 0%, transparent 68%);
+  animation: hero-pulse 5s ease-in-out infinite;
+}
+.hero-sun-rays {
+  background: repeating-conic-gradient(from 0deg, rgba(255, 224, 110, 0.6) 0deg 5deg, transparent 5deg 15deg);
+  -webkit-mask-image: radial-gradient(circle, #000 18%, transparent 68%);
+  mask-image: radial-gradient(circle, #000 18%, transparent 68%);
+  animation: hero-spin 70s linear infinite;
+}
+
+.hero-clouds {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+:root[data-theme="light"] .hero-clouds {
+  opacity: 1;
+}
+.hero-cloud {
+  position: absolute;
+  left: 0;
+  animation: hero-cloud-drift linear infinite;
+  will-change: transform;
+}
+
+/* readable headline over the bright day sky */
+:root[data-theme="light"] .hero-copy {
+  text-shadow: 0 1px 3px rgba(8, 40, 90, 0.6), 0 2px 18px rgba(8, 40, 90, 0.6);
+}
+:root[data-theme="light"] .hero-eyebrow {
+  color: #fff6cf;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(6, 30, 70, 0.9), 0 2px 16px rgba(6, 30, 70, 0.75);
+}
+:root[data-theme="light"] .hero-sub {
+  color: rgba(255, 255, 255, 0.97);
+  text-shadow: 0 1px 3px rgba(6, 30, 70, 0.75), 0 2px 16px rgba(6, 30, 70, 0.6);
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes hero-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@keyframes hero-cloud-drift {
+  from {
+    transform: translateX(-32vw);
+  }
+  to {
+    transform: translateX(132vw);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cloud,
+  .hero-sun-glow,
+  .hero-sun-rays {
+    animation: none;
+  }
+}

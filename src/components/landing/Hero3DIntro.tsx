@@ -60,6 +60,33 @@ function ellipseKeyframes(radiusX: number, radiusY: number, steps: number, phase
 
 const SPRING = { stiffness: 90, damping: 24, mass: 0.6 };
 
+// Drifting clouds for the day scene: top %, width px, drift seconds, negative start delay, opacity.
+const CLOUDS = [
+  { top: 7, width: 260, duration: 95, delay: -20, opacity: 0.95 },
+  { top: 16, width: 180, duration: 120, delay: -80, opacity: 0.8 },
+  { top: 26, width: 320, duration: 140, delay: -45, opacity: 0.9 },
+  { top: 11, width: 140, duration: 110, delay: -100, opacity: 0.7 },
+  { top: 34, width: 220, duration: 160, delay: -130, opacity: 0.75 },
+  { top: 20, width: 200, duration: 130, delay: -5, opacity: 0.85 },
+];
+
+function Cloud({ width }: { width: number }) {
+  return (
+    <svg viewBox="0 0 200 100" width={width} height={width / 2} aria-hidden style={{ filter: "blur(1.5px)" }}>
+      <g fill="#ffffff">
+        <circle cx="52" cy="62" r="26" />
+        <circle cx="86" cy="48" r="34" />
+        <circle cx="124" cy="56" r="30" />
+        <circle cx="154" cy="66" r="22" />
+        <rect x="30" y="62" width="146" height="26" rx="13" />
+      </g>
+      <g fill="#dcebf7" opacity="0.7">
+        <rect x="40" y="76" width="130" height="12" rx="6" />
+      </g>
+    </svg>
+  );
+}
+
 export function Hero3DIntro() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -148,9 +175,13 @@ export function Hero3DIntro() {
         ref={sceneRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="sticky top-0 h-screen w-full overflow-hidden bg-gradient-to-b from-[#0b1024] via-[#1a1a3d] to-[#2a1a35]"
+        className="sticky top-0 h-screen w-full overflow-hidden bg-[#0b1024]"
         style={{ perspective: 1400 }}
       >
+        {/* night sky, with the day sky fading in over it in the light theme */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0b1024] via-[#1a1a3d] to-[#2a1a35]" />
+        <div className="hero-sky-day pointer-events-none absolute inset-0" />
+
         {/* cursor-following glow orb (incense / divine light) */}
         <motion.div
           className="pointer-events-none absolute h-[420px] w-[420px] rounded-full blur-3xl"
@@ -170,23 +201,52 @@ export function Hero3DIntro() {
           style={{ y: skyY, opacity: mountainsOpacity, willChange: "transform" }}
           className="pointer-events-none absolute inset-0"
         >
-          {Array.from({ length: 60 }).map((_, i) => (
-            <span
-              key={i}
-              className="absolute rounded-full bg-white/70"
-              style={{
-                width: (i % 3) + 1,
-                height: (i % 3) + 1,
-                left: `${(i * 53) % 100}%`,
-                top: `${(i * 29) % 65}%`,
-                opacity: 0.3 + ((i * 13) % 60) / 100,
-              }}
-            />
-          ))}
-          <motion.div
-            className="absolute right-[12%] top-[12%] h-20 w-20 rounded-full bg-gradient-to-br from-yellow-100 to-amber-300"
+          <div className="hero-stars absolute inset-0">
+            {Array.from({ length: 60 }).map((_, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full bg-white/70"
+                style={{
+                  width: (i % 3) + 1,
+                  height: (i % 3) + 1,
+                  left: `${(i * 53) % 100}%`,
+                  top: `${(i * 29) % 65}%`,
+                  opacity: 0.3 + ((i * 13) % 60) / 100,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* moon (dark theme) */}
+          <div
+            className="hero-moon absolute right-[12%] top-[12%] h-20 w-20 rounded-full bg-gradient-to-br from-yellow-100 to-amber-300"
             style={{ boxShadow: "0 0 80px 20px rgba(253,224,71,0.35)" }}
           />
+
+          {/* sun (light theme): glowing disc with slowly turning rays */}
+          <div className="hero-sun absolute right-[12%] top-[12%] h-20 w-20">
+            <span className="hero-sun-rays absolute -inset-24 rounded-full" />
+            <span className="hero-sun-glow absolute -inset-12 rounded-full" />
+            <span className="hero-sun-disc absolute -inset-1 rounded-full" />
+          </div>
+
+          {/* drifting clouds (light theme) */}
+          <div className="hero-clouds absolute inset-0 overflow-hidden">
+            {CLOUDS.map((c, i) => (
+              <span
+                key={i}
+                className="hero-cloud"
+                style={{
+                  top: `${c.top}%`,
+                  opacity: c.opacity,
+                  animationDuration: `${c.duration}s`,
+                  animationDelay: `${c.delay}s`,
+                }}
+              >
+                <Cloud width={c.width} />
+              </span>
+            ))}
+          </div>
         </motion.div>
 
         {/* 3D tilting parallax scene */}
@@ -214,11 +274,12 @@ export function Hero3DIntro() {
                 }}
               >
                 <motion.div
+                  className="hero-mtn"
                   style={{
                     y: mountainMotion[i].y,
                     x: mountainMotion[i].x,
                     opacity: layer.opacity,
-                    filter: `brightness(${layer.brightness})`,
+                    filter: `hue-rotate(var(--mtn-hue)) saturate(var(--mtn-sat)) contrast(var(--mtn-contrast)) brightness(calc(${layer.brightness} * var(--mtn-boost)))`,
                     willChange: "transform",
                   }}
                 >
@@ -365,7 +426,7 @@ export function Hero3DIntro() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="font-poppins text-xs uppercase tracking-[0.35em] text-gold sm:text-sm"
+            className="hero-copy hero-eyebrow font-poppins text-xs uppercase tracking-[0.35em] text-gold sm:text-sm"
           >
             Bharath Treks &amp; Tales
           </motion.p>
@@ -374,7 +435,7 @@ export function Hero3DIntro() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.9 }}
-            className="mt-4 max-w-3xl text-balance text-center font-heading text-3xl font-bold leading-tight text-white sm:text-5xl md:text-6xl"
+            className="hero-copy mt-4 max-w-3xl text-balance text-center font-heading text-3xl font-bold leading-tight text-white sm:text-5xl md:text-6xl"
           >
             Walk the Sacred Trails.
             <br />
@@ -385,7 +446,7 @@ export function Hero3DIntro() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="mt-4 max-w-xl text-center text-sm text-white/70 sm:text-base"
+            className="hero-copy hero-sub mt-4 max-w-xl text-center text-sm text-white/70 sm:text-base"
           >
             Every ridge hides a shrine. Every summit tells a story. Move your
             cursor, and watch the mountains breathe.
@@ -397,10 +458,10 @@ export function Hero3DIntro() {
           style={{ opacity: secondCaptionOpacity, y: secondCaptionY }}
           className="pointer-events-none absolute inset-x-0 bottom-[6%] z-20 flex flex-col items-center px-6 text-center"
         >
-          <h2 className="font-heading text-2xl font-bold text-white sm:text-4xl">
+          <h2 className="hero-copy font-heading text-2xl font-bold text-white sm:text-4xl">
             Every Shrine Welcomes the Faithful.
           </h2>
-          <p className="mt-3 max-w-lg text-sm text-white/70 sm:text-base">
+          <p className="hero-copy hero-sub mt-3 max-w-lg text-sm text-white/70 sm:text-base">
             Pilgrims arrive where the mountains meet the divine — join the
             journey to India&apos;s most sacred temples.
           </p>
