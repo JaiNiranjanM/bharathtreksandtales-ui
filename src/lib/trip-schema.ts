@@ -44,11 +44,18 @@ export const aiTripSchema = z.object({
   bestSeason: z.string().describe("Best months to visit"),
   weekend: z.boolean().describe("True if the trip runs on a weekend"),
   tags: z.array(z.string()).describe("3-6 short tags, e.g. 'Sunrise', 'Monsoon', 'Waterfall'"),
-  itinerary: z
-    .array(z.object({ time: z.string(), activity: z.string() }))
-    .describe(
-      "Chronological timeline. For multi-day trips prefix time with the day, e.g. 'Day 1 · 6:00 AM'"
-    ),
+  itineraryDays: z
+    .array(
+      z.object({
+        day: z.number().int().describe("Day number starting at 1"),
+        title: z.string().describe("Short day title, e.g. 'Arrival in Sri Lanka' or 'Kandy & Temple of the Tooth'"),
+        description: z.string().describe("1-3 sentences describing the day"),
+        schedule: z
+          .array(z.object({ time: z.string(), activity: z.string() }))
+          .describe("Timed activities for the day if the itinerary gives times; otherwise empty"),
+      })
+    )
+    .describe("One entry per day, in order. A single-day trip has exactly one entry."),
   inclusions: z.array(z.string()),
   exclusions: z.array(z.string()),
   thingsToCarry: z.array(z.string()),
@@ -101,6 +108,17 @@ export const tripInputSchema = z.object({
   weekend: z.boolean().default(false),
   pickupLocations: strList,
   tags: strList,
+  itineraryDays: z
+    .array(
+      z.object({
+        day: z.coerce.number().int().min(1),
+        title: str.min(1, "Each day needs a title"),
+        description: str.default(""),
+        schedule: z.array(z.object({ time: str, activity: str.min(1) })).default([]),
+      })
+    )
+    .default([]),
+  /** Flat timeline, derived from `itineraryDays` on save. Kept for older trips. */
   itinerary: z.array(z.object({ time: str, activity: str.min(1) })).default([]),
   inclusions: strList,
   exclusions: strList,

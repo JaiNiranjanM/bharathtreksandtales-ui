@@ -1,6 +1,6 @@
 import "server-only";
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
-import type { TravelPackage } from "./data";
+import { getItineraryDays, type TravelPackage } from "./data";
 import { CONTACT_PHONE_DISPLAY } from "./contact";
 
 const PAGE_W = 595.28; // A4
@@ -151,12 +151,17 @@ export async function buildItineraryPdf(pkg: TravelPackage, siteUrl: string): Pr
     heading("Trip highlights");
     bullets(pkg.highlights);
   }
-  if (pkg.itinerary.length) {
-    heading("Itinerary");
-    for (const step of pkg.itinerary) {
-      ensure(32);
-      if (step.time) paragraph(step.time, { font: bold, size: 10, color: rgb(0.15, 0.39, 0.92) });
-      paragraph(step.activity, { indent: 10, gap: 4 });
+  const days = getItineraryDays(pkg);
+  if (days.length) {
+    heading("Day-by-day itinerary");
+    for (const d of days) {
+      ensure(40);
+      paragraph(`Day ${d.day}: ${d.title}`, { font: bold, size: 11, color: rgb(0.15, 0.39, 0.92) });
+      if (d.description) paragraph(d.description, { indent: 10, gap: 2 });
+      for (const s of d.schedule) {
+        paragraph(s.time ? `${s.time} - ${s.activity}` : s.activity, { indent: 10, size: 10 });
+      }
+      y -= 6;
     }
   }
   if (pkg.pickupLocations.length) {

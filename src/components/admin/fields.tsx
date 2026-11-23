@@ -110,60 +110,115 @@ export function StringListEditor({
   );
 }
 
-export function ItineraryEditor({
+type EditorDay = {
+  day: number;
+  title: string;
+  description: string;
+  schedule: { time: string; activity: string }[];
+};
+
+export function DayItineraryEditor({
   value,
   onChange,
 }: {
-  value: { time: string; activity: string }[];
-  onChange: (v: { time: string; activity: string }[]) => void;
+  value: EditorDay[];
+  onChange: (v: EditorDay[]) => void;
 }) {
-  function update(i: number, patch: Partial<{ time: string; activity: string }>) {
-    onChange(value.map((s, j) => (j === i ? { ...s, ...patch } : s)));
-  }
+  const renumber = (days: EditorDay[]) => days.map((d, i) => ({ ...d, day: i + 1 }));
+  const update = (i: number, patch: Partial<EditorDay>) =>
+    onChange(value.map((d, j) => (j === i ? { ...d, ...patch } : d)));
   function move(i: number, dir: -1 | 1) {
     const j = i + dir;
     if (j < 0 || j >= value.length) return;
     const next = [...value];
     [next[i], next[j]] = [next[j], next[i]];
-    onChange(next);
+    onChange(renumber(next));
   }
 
   return (
-    <div className="space-y-2">
-      {value.map((step, i) => (
-        <div key={i} className="flex flex-col gap-2 rounded-xl border border-foreground/10 p-2.5 sm:flex-row sm:items-start">
-          <input
-            value={step.time}
-            placeholder="Day 1 · 6:00 AM"
-            onChange={(e) => update(i, { time: e.target.value })}
-            className={cn(inputClass, "sm:w-44")}
-          />
+    <div className="space-y-3">
+      {value.map((d, i) => (
+        <div key={i} className="rounded-xl border border-foreground/10 p-3 sm:p-4">
+          <div className="flex items-center gap-2">
+            <span className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-saffron text-[9px] font-bold leading-none text-white">
+              DAY
+              <span className="mt-0.5 text-base">{d.day}</span>
+            </span>
+            <input
+              value={d.title}
+              placeholder="Day title, e.g. Arrival in Sri Lanka"
+              onChange={(e) => update(i, { title: e.target.value })}
+              className={inputClass}
+            />
+            <div className="flex shrink-0 gap-0.5">
+              <IconBtn label="Move day up" onClick={() => move(i, -1)}>
+                <ArrowUp size={14} />
+              </IconBtn>
+              <IconBtn label="Move day down" onClick={() => move(i, 1)}>
+                <ArrowDown size={14} />
+              </IconBtn>
+              <IconBtn label="Remove day" onClick={() => onChange(renumber(value.filter((_, j) => j !== i)))}>
+                <Trash2 size={14} />
+              </IconBtn>
+            </div>
+          </div>
           <textarea
-            value={step.activity}
+            value={d.description}
             rows={2}
-            placeholder="What happens"
-            onChange={(e) => update(i, { activity: e.target.value })}
-            className={cn(inputClass, "flex-1 resize-y")}
+            placeholder="What happens on this day"
+            onChange={(e) => update(i, { description: e.target.value })}
+            className={cn(inputClass, "mt-2 resize-y")}
           />
-          <div className="flex shrink-0 gap-0.5 self-end sm:self-start">
-            <IconBtn label="Move up" onClick={() => move(i, -1)}>
-              <ArrowUp size={14} />
-            </IconBtn>
-            <IconBtn label="Move down" onClick={() => move(i, 1)}>
-              <ArrowDown size={14} />
-            </IconBtn>
-            <IconBtn label="Remove step" onClick={() => onChange(value.filter((_, j) => j !== i))}>
-              <Trash2 size={14} />
-            </IconBtn>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-wide opacity-50">
+            Timed schedule (optional)
+          </p>
+          <div className="mt-1.5 space-y-1.5">
+            {d.schedule.map((s, k) => (
+              <div key={k} className="flex flex-col gap-1.5 sm:flex-row">
+                <input
+                  value={s.time}
+                  placeholder="6:00 AM"
+                  onChange={(e) =>
+                    update(i, { schedule: d.schedule.map((x, m) => (m === k ? { ...x, time: e.target.value } : x)) })
+                  }
+                  className={cn(inputClass, "sm:w-32")}
+                />
+                <input
+                  value={s.activity}
+                  placeholder="Activity"
+                  onChange={(e) =>
+                    update(i, {
+                      schedule: d.schedule.map((x, m) => (m === k ? { ...x, activity: e.target.value } : x)),
+                    })
+                  }
+                  className={inputClass}
+                />
+                <IconBtn
+                  label="Remove activity"
+                  onClick={() => update(i, { schedule: d.schedule.filter((_, m) => m !== k) })}
+                >
+                  <X size={14} />
+                </IconBtn>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => update(i, { schedule: [...d.schedule, { time: "", activity: "" }] })}
+              className="flex items-center gap-1 text-xs font-medium opacity-70 hover:opacity-100 cursor-pointer"
+            >
+              <Plus size={13} /> Add timed activity
+            </button>
           </div>
         </div>
       ))}
       <button
         type="button"
-        onClick={() => onChange([...value, { time: "", activity: "" }])}
+        onClick={() =>
+          onChange(renumber([...value, { day: value.length + 1, title: "", description: "", schedule: [] }]))
+        }
         className="flex items-center gap-1 rounded-lg border border-dashed border-foreground/20 px-3 py-2 text-xs font-medium hover:bg-foreground/5 cursor-pointer"
       >
-        <Plus size={14} /> Add step
+        <Plus size={14} /> Add day
       </button>
     </div>
   );

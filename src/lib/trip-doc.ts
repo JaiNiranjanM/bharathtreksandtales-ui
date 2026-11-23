@@ -1,4 +1,4 @@
-import type { TravelPackage } from "./data";
+import { flattenItineraryDays, type TravelPackage } from "./data";
 import type { TripInput, TripStatus, UploadedFileRef } from "./trip-schema";
 
 /** A trip document as stored in Firestore. Content fields may be partial while generating. */
@@ -44,7 +44,8 @@ export function tripDocToPackage(doc: TripDoc): TravelPackage {
     weekend: doc.weekend ?? false,
     pickupLocations: doc.pickupLocations ?? [],
     tags: doc.tags ?? [],
-    itinerary: doc.itinerary ?? [],
+    itinerary: doc.itinerary?.length ? doc.itinerary : flattenItineraryDays(doc.itineraryDays ?? []),
+    itineraryDays: doc.itineraryDays,
     inclusions: doc.inclusions ?? [],
     exclusions: doc.exclusions ?? [],
     thingsToCarry: doc.thingsToCarry ?? [],

@@ -19,7 +19,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { PackageCard } from "@/components/packages/PackageCard";
 import { BookingSidebar } from "@/components/packages/BookingSidebar";
-import type { TravelPackage } from "@/lib/data";
+import { ItineraryAccordion } from "@/components/packages/ItineraryAccordion";
+import { getItineraryDays, type TravelPackage } from "@/lib/data";
 
 /**
  * The trip page body. Used by the public trip page and the admin live preview,
@@ -32,6 +33,7 @@ export function PackageDetailView({
   pkg: TravelPackage;
   related?: TravelPackage[];
 }) {
+  const days = getItineraryDays(pkg);
   const facts = [
     { icon: Mountain, label: "Altitude", value: pkg.altitude },
     { icon: Route, label: "Trek Distance", value: pkg.trekDistance },
@@ -116,17 +118,19 @@ export function PackageDetailView({
           {/* Highlights */}
           {(pkg.highlights.length > 0 || pkg.temples.length > 0) && (
             <section>
-              <h2 className="font-heading text-2xl font-bold">Trip Highlights</h2>
-              <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <SectionLabel>Highlights</SectionLabel>
+              <ul className="mt-5 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
                 {pkg.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-forest-light" />
+                  <li key={h} className="flex items-start gap-3 text-sm">
+                    <span aria-hidden className="mt-0.5 shrink-0 text-saffron">
+                      ✦
+                    </span>
                     {h}
                   </li>
                 ))}
               </ul>
               {pkg.temples.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-5 flex flex-wrap gap-2">
                   {pkg.temples.map((t) => (
                     <Badge key={t} variant="gold">
                       🛕 {t}
@@ -137,28 +141,18 @@ export function PackageDetailView({
             </section>
           )}
 
-          {/* Itinerary */}
-          {pkg.itinerary.length > 0 && (
+          {/* Day-by-day itinerary */}
+          {days.length > 0 && (
             <section>
-              <h2 className="font-heading text-2xl font-bold">Itinerary Timeline</h2>
+              <SectionLabel>Day-by-Day Itinerary</SectionLabel>
               {(pkg.departure || pkg.returnTime) && (
-                <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm opacity-70">
+                <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm opacity-70">
                   <Clock size={14} />
                   {pkg.departure && <span>Departure: {pkg.departure}</span>}
                   {pkg.returnTime && <span>Return: {pkg.returnTime}</span>}
                 </p>
               )}
-              <div className="mt-6 space-y-6 border-l-2 border-foreground/10 pl-6">
-                {pkg.itinerary.map((step, i) => (
-                  <div key={i} className="relative">
-                    <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-royal bg-surface" />
-                    <p className="text-xs font-semibold uppercase tracking-wide text-royal-light">
-                      {step.time}
-                    </p>
-                    <p className="mt-1 text-sm">{step.activity}</p>
-                  </div>
-                ))}
-              </div>
+              <ItineraryAccordion days={days} />
             </section>
           )}
 
@@ -316,5 +310,13 @@ function Fact({
         <p className="text-sm font-medium">{value}</p>
       </div>
     </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="border-b border-foreground/10 pb-3 text-sm font-bold uppercase tracking-[0.25em] text-saffron">
+      {children}
+    </h2>
   );
 }

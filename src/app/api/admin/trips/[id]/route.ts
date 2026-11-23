@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { getAdminSession } from "@/lib/auth";
 import { adminBucket } from "@/lib/firebase/admin";
+import { flattenItineraryDays } from "@/lib/data";
 import { tripInputSchema } from "@/lib/trip-schema";
 import { getTrip, isSlugTaken, tripsCollection, TRIPS_TAG } from "@/lib/trips";
 
@@ -55,6 +56,7 @@ export async function PUT(request: Request, { params }: Ctx) {
     .doc(id)
     .update({
       ...trip,
+      itinerary: trip.itineraryDays.length ? flattenItineraryDays(trip.itineraryDays) : trip.itinerary,
       discountPrice: trip.discountPrice || trip.price,
       status,
       error: null,

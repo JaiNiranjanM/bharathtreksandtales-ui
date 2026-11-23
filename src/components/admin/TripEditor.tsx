@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PackageDetailView } from "@/components/packages/PackageDetailView";
-import { allIndianStates, categories } from "@/lib/data";
+import { allIndianStates, categories, getItineraryDays } from "@/lib/data";
 import { difficultyLevels, slugify, type TripInput } from "@/lib/trip-schema";
 import { tripDocToPackage, type TripDoc } from "@/lib/trip-doc";
 import { uploadPhoto } from "@/lib/firebase/upload";
@@ -31,7 +31,7 @@ import { StatusBadge } from "./StatusBadge";
 import {
   DateListEditor,
   Field,
-  ItineraryEditor,
+  DayItineraryEditor,
   Section,
   StringListEditor,
   inputClass,
@@ -68,6 +68,7 @@ function toForm(doc: TripDoc): TripInput {
     pickupLocations: doc.pickupLocations ?? [],
     tags: doc.tags ?? [],
     itinerary: doc.itinerary ?? [],
+    itineraryDays: getItineraryDays(tripDocToPackage(doc)),
     inclusions: doc.inclusions ?? [],
     exclusions: doc.exclusions ?? [],
     thingsToCarry: doc.thingsToCarry ?? [],
@@ -571,8 +572,8 @@ function Editor({ trip, onSaved }: { trip: TripDoc; onSaved: (t: TripDoc) => voi
             </Field>
           </Section>
 
-          <Section title="Itinerary timeline">
-            <ItineraryEditor value={form.itinerary} onChange={(v) => set("itinerary", v)} />
+          <Section title="Day-by-day itinerary" description="Shown as expandable day cards on the trip page.">
+            <DayItineraryEditor value={form.itineraryDays} onChange={(v) => set("itineraryDays", v)} />
           </Section>
 
           <Section title="Inclusions, exclusions & packing">

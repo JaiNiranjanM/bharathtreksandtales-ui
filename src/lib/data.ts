@@ -112,6 +112,14 @@ export const categories: Category[] = [
 
 export type Difficulty = "Easy" | "Moderate" | "Challenging" | "Extreme";
 
+export interface TripDay {
+  day: number;
+  title: string;
+  description: string;
+  /** Optional timed activities within the day. */
+  schedule: { time: string; activity: string }[];
+}
+
 export interface TravelPackage {
   id: string;
   slug: string;
@@ -146,6 +154,8 @@ export interface TravelPackage {
   exclusions: string[];
   thingsToCarry: string[];
   // Optional fields filled by admin-created (AI-assisted) trips.
+  /** Day-by-day plan. When missing, it is derived from the flat `itinerary`. */
+  itineraryDays?: TripDay[];
   overview?: string;
   bestSeason?: string;
   trekDistance?: string;
@@ -615,4 +625,44 @@ export function getStateSummary(list: TravelPackage[], state: string) {
     treks,
     upcomingDates: dates.slice(0, 3),
   };
+}
+
+function shorten(text: string, max = 60) {
+  const t = text.trim();
+  return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+}
+
+/** The day-by-day plan for a trip: its own days, or the flat itinerary grouped by "Day N" prefixes. */
+export function getItineraryDays(pkg: Pick<TravelPackage, "itinerary" | "itineraryDays">): TripDay[] {
+  if (pkg.itineraryDays && pkg.itineraryDays.length > 0) return pkg.itineraryDays;
+  if (pkg.itinerary.length === 0) return [];
+
+  const groups = new Map<number, { time: string; activity: string }[]>();
+  let current = 1;
+  for (const step of pkg.itinerary) {
+    const m = /^\s*day\s*(\d+)\s*[·:\-–—]?\s*(.*)$/i.exec(step.time);
+    let time = step.time;
+    if (m) {
+      current = Number(m[1]);
+      time = m[2];
+    }
+    groups.set(current, [...(groups.get(current) ?? []), { time, activity: step.activity }]);
+  }
+  const single = groups.size === 1;
+  return Array.from(groups.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([day, schedule]) => ({
+      day,
+      title: single ? "Trip schedule" : shorten(schedule[0].activity),
+      description: "",
+      schedule,
+    }));
+}
+
+/** Flat timeline form of the days (kept for older code paths and the stored `itinerary` field). */
+export function flattenItineraryDays(days: TripDay[]): { time: string; activity: string }[] {
+  return days.flatMap((d) => [
+    { time: `Day ${d.day}`, activity: [d.title, d.description].filter(Boolean).join(" - ") },
+    ...d.schedule.map((s) => ({ time: `Day ${d.day} · ${s.time}`.trim(), activity: s.activity })),
+  ]);
 }

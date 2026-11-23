@@ -2,6 +2,7 @@ import { after, NextResponse } from "next/server";
 import { z } from "zod";
 import { getAdminSession } from "@/lib/auth";
 import { generateTripFromItinerary } from "@/lib/ai/generateTrip";
+import { flattenItineraryDays } from "@/lib/data";
 import { generateRequestSchema, slugify } from "@/lib/trip-schema";
 import { tripsCollection, uniqueSlug, type TripDoc } from "@/lib/trips";
 
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
       const price = input.price || priceFromItinerary || 0;
       await ref.update({
         ...content,
+        itinerary: flattenItineraryDays(content.itineraryDays),
         slug: await uniqueSlug(slugify(ai.title), input.id),
         price,
         discountPrice: input.discountPrice || price,
