@@ -4,11 +4,13 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { IndiaMap } from "./IndiaMap";
 import { StateResultsPanel } from "./StateResultsPanel";
-import { states } from "@/lib/data";
+import { getStatesWithTrips } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 
 export function ExploreClient() {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const states = getStatesWithTrips(usePackages());
 
   function handleSelect(state: string) {
     setSelectedState(state);

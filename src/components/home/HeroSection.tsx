@@ -8,13 +8,13 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import { Search, MapPin, Calendar, Users as UsersIcon } from "lucide-react";
-import { categories, packages, getCategory, type CategoryId } from "@/lib/data";
+import { categories, getCategory, type CategoryId } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { Button } from "@/components/ui/button";
-
-const slides = packages.slice(0, 5);
 
 export function HeroSection({ selectedCategory }: { selectedCategory: CategoryId | null }) {
   const category = selectedCategory ? getCategory(selectedCategory) : null;
+  const slides = usePackages().slice(0, 5);
 
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden pt-24">

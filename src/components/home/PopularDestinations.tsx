@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { states, packages } from "@/lib/data";
+import { getStatesWithTrips } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { SectionHeading } from "./SectionHeading";
 
 const stateImages: Record<string, string> = {
@@ -15,6 +16,8 @@ const stateImages: Record<string, string> = {
 };
 
 export function PopularDestinations() {
+  const packages = usePackages();
+  const states = getStatesWithTrips(packages).slice(0, 10);
   return (
     <section className="mx-auto max-w-7xl px-6 py-20">
       <SectionHeading

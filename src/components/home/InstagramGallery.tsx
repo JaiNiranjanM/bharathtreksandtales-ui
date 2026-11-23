@@ -3,12 +3,11 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { InstagramIcon } from "@/components/icons/SocialIcons";
-import { packages } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { SectionHeading } from "./SectionHeading";
 
-const shots = packages.flatMap((p) => p.gallery).slice(0, 8);
-
 export function InstagramGallery() {
+  const shots = usePackages().flatMap((p) => p.gallery).slice(0, 8);
   return (
     <section className="mx-auto max-w-7xl px-6 py-20">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">

@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Minus, Plus, ShieldCheck, Tag } from "lucide-react";
-import type { TravelPackage } from "@/lib/data";
+import { getDepartureLabels, type TravelPackage } from "@/lib/data";
 import { formatINR, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const dates = ["Sat, 2 Aug", "Sun, 3 Aug", "Sat, 9 Aug", "Sun, 10 Aug", "Sat, 16 Aug"];
-
 export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
+  const dates = getDepartureLabels(pkg);
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [pickup, setPickup] = useState(pkg.pickupLocations[0]);
   const [seats, setSeats] = useState(1);

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import indiaMap from "@svg-maps/india";
 import { stateSvgIdToName, getStateSummary } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { cn } from "@/lib/utils";
 
 interface TooltipState {
@@ -22,6 +23,8 @@ export function IndiaMap({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<TooltipState | null>(null);
+  const packages = usePackages();
+  const statesWithTrips = new Set(packages.map((p) => p.state));
 
   const handleMove = useCallback(
     (e: React.MouseEvent<SVGPathElement>, id: string, name: string) => {
@@ -32,7 +35,7 @@ export function IndiaMap({
     []
   );
 
-  const summary = hovered ? getStateSummary(stateSvgIdToName[hovered.id] ?? "") : null;
+  const summary = hovered ? getStateSummary(packages, stateSvgIdToName[hovered.id] ?? "") : null;
 
   return (
     <div ref={containerRef} className="relative w-full select-none">
@@ -44,7 +47,7 @@ export function IndiaMap({
       >
         {indiaMap.locations.map((loc) => {
           const stateName = stateSvgIdToName[loc.id];
-          const hasTrips = Boolean(stateName);
+          const hasTrips = Boolean(stateName && statesWithTrips.has(stateName));
           const isSelected = stateName === selectedState;
           const isHovered = hovered?.id === loc.id;
 

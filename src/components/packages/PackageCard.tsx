@@ -104,9 +104,18 @@ export function PackageCard({ pkg, index = 0 }: { pkg: TravelPackage; index?: nu
         </div>
 
         <div className="mt-2 flex items-center gap-1 text-xs">
-          <Star size={13} className="fill-gold text-gold" />
-          <span className="font-medium">{pkg.rating}</span>
-          <span className="opacity-60">({pkg.reviewCount.toLocaleString()})</span>
+          {pkg.reviewCount > 0 ? (
+            <>
+              <Star size={13} className="fill-gold text-gold" />
+              <span className="font-medium">{pkg.rating}</span>
+              <span className="opacity-60">({pkg.reviewCount.toLocaleString()})</span>
+            </>
+          ) : (
+            <>
+              <Star size={13} className="text-gold" />
+              <span className="font-medium">New trip</span>
+            </>
+          )}
         </div>
 
         <div className="mt-auto flex items-end justify-between pt-4">

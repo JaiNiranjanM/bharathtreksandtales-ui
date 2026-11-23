@@ -6,13 +6,13 @@ import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import {
   categories,
-  packages,
-  states,
+  getStatesWithTrips,
   difficulties,
   type CategoryId,
   type Difficulty,
 } from "@/lib/data";
 import { PackageCard } from "./PackageCard";
+import { usePackages } from "./PackagesProvider";
 import { cn } from "@/lib/utils";
 
 const durationOptions = [
@@ -23,6 +23,12 @@ const durationOptions = [
 
 export function PackagesExplorer() {
   const searchParams = useSearchParams();
+  const packages = usePackages();
+  const states = useMemo(() => getStatesWithTrips(packages), [packages]);
+  const budgetCap = useMemo(
+    () => Math.max(10000, Math.ceil(Math.max(0, ...packages.map((p) => p.discountPrice)) / 1000) * 1000),
+    [packages]
+  );
 
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<CategoryId | "all">(
@@ -31,7 +37,7 @@ export function PackagesExplorer() {
   const [state, setState] = useState<string>(searchParams.get("state") || "all");
   const [difficulty, setDifficulty] = useState<Difficulty | "all">("all");
   const [duration, setDuration] = useState<string>("all");
-  const [maxBudget, setMaxBudget] = useState(10000);
+  const [maxBudget, setMaxBudget] = useState(budgetCap);
   const [weekendOnly, setWeekendOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -51,7 +57,7 @@ export function PackagesExplorer() {
       if (weekendOnly && !p.weekend) return false;
       return true;
     });
-  }, [query, category, state, difficulty, duration, maxBudget, weekendOnly]);
+  }, [packages, query, category, state, difficulty, duration, maxBudget, weekendOnly]);
 
   function resetFilters() {
     setQuery("");
@@ -59,7 +65,7 @@ export function PackagesExplorer() {
     setState("all");
     setDifficulty("all");
     setDuration("all");
-    setMaxBudget(10000);
+    setMaxBudget(budgetCap);
     setWeekendOnly(false);
   }
 
@@ -170,7 +176,7 @@ export function PackagesExplorer() {
             <input
               type="range"
               min={500}
-              max={10000}
+              max={budgetCap}
               step={500}
               value={maxBudget}
               onChange={(e) => setMaxBudget(Number(e.target.value))}

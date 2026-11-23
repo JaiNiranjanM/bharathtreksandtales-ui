@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { packages, type CategoryId } from "@/lib/data";
+import type { CategoryId } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { PackageCard } from "@/components/packages/PackageCard";
 import { SectionHeading } from "./SectionHeading";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export function TrendingPackages({
   description?: string;
   limit?: number;
 }) {
+  const packages = usePackages();
   const filtered = selectedCategory
     ? packages.filter((p) => p.category.includes(selectedCategory))
     : packages;

@@ -145,6 +145,14 @@ export interface TravelPackage {
   inclusions: string[];
   exclusions: string[];
   thingsToCarry: string[];
+  // Optional fields filled by admin-created (AI-assisted) trips.
+  overview?: string;
+  bestSeason?: string;
+  trekDistance?: string;
+  safetyNotes?: string[];
+  /** ISO dates (YYYY-MM-DD) of fixed departures. Falls back to `upcomingDates` when empty. */
+  departures?: string[];
+  sources?: { title: string; url: string }[];
 }
 
 export const packages: TravelPackage[] = [
@@ -528,51 +536,83 @@ export const states = [
   "Maharashtra",
 ] as const;
 
+/** All Indian states / UTs supported by the map, in the same spelling the AI is asked to use. */
+export const allIndianStates = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli", "Daman and Diu", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka",
+  "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+] as const;
+
 export const difficulties: Difficulty[] = ["Easy", "Moderate", "Challenging", "Extreme"];
 
 export function getCategory(id: CategoryId) {
   return categories.find((c) => c.id === id);
 }
 
-export function getPackageBySlug(slug: string) {
-  return packages.find((p) => p.slug === slug);
+/** States that have at least one trip, with the original featured states first. */
+export function getStatesWithTrips(list: TravelPackage[]): string[] {
+  const used = new Set(list.map((p) => p.state));
+  const featured = states.filter((s) => used.has(s));
+  const rest = Array.from(used)
+    .filter((s) => !(states as readonly string[]).includes(s))
+    .sort();
+  return [...featured, ...rest];
 }
 
-export function getPackagesByCategory(id: CategoryId) {
-  return packages.filter((p) => p.category.includes(id));
-}
-
-export function getRelatedPackages(pkg: TravelPackage, limit = 3) {
-  return packages
+export function getRelatedPackages(pkg: TravelPackage, list: TravelPackage[], limit = 3) {
+  return list
     .filter((p) => p.id !== pkg.id && p.category.some((c) => pkg.category.includes(c)))
     .slice(0, limit);
 }
 
 export const upcomingDates = ["Sat, 2 Aug", "Sun, 3 Aug", "Sat, 9 Aug", "Sun, 10 Aug", "Sat, 16 Aug"];
 
-// Maps the 2-letter state ids used by the @svg-maps/india dataset to our state names.
-export const stateSvgIdToName: Record<string, (typeof states)[number]> = {
-  ap: "Andhra Pradesh",
-  ka: "Karnataka",
-  kl: "Kerala",
-  mh: "Maharashtra",
-  tn: "Tamil Nadu",
-};
-
-export function getPackagesByState(state: string) {
-  return packages.filter((p) => p.state === state);
+/** Formats an ISO date (YYYY-MM-DD) as e.g. "Sat, 2 Aug". */
+export function formatDepartureDate(iso: string) {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
 }
 
-export function getStateSummary(state: string) {
-  const statePackages = getPackagesByState(state);
+/** Upcoming departure labels for a trip: its own future dates, or the legacy shared list. */
+export function getDepartureLabels(pkg: TravelPackage): string[] {
+  if (pkg.departures && pkg.departures.length > 0) {
+    const today = new Date().toISOString().slice(0, 10);
+    return pkg.departures.filter((d) => d >= today).sort().map(formatDepartureDate);
+  }
+  return upcomingDates;
+}
+
+// Maps the 2-letter state ids used by the @svg-maps/india dataset to state names.
+export const stateSvgIdToName: Record<string, string> = {
+  an: "Andaman and Nicobar Islands", ap: "Andhra Pradesh", ar: "Arunachal Pradesh", as: "Assam",
+  br: "Bihar", ch: "Chandigarh", ct: "Chhattisgarh", dn: "Dadra and Nagar Haveli",
+  dd: "Daman and Diu", dl: "Delhi", ga: "Goa", gj: "Gujarat", hr: "Haryana",
+  hp: "Himachal Pradesh", jk: "Jammu and Kashmir", jh: "Jharkhand", ka: "Karnataka",
+  kl: "Kerala", ld: "Lakshadweep", mp: "Madhya Pradesh", mh: "Maharashtra", mn: "Manipur",
+  ml: "Meghalaya", mz: "Mizoram", nl: "Nagaland", or: "Odisha", py: "Puducherry", pb: "Punjab",
+  rj: "Rajasthan", sk: "Sikkim", tn: "Tamil Nadu", tg: "Telangana", tr: "Tripura",
+  up: "Uttar Pradesh", ut: "Uttarakhand", wb: "West Bengal",
+};
+
+export function getPackagesByState(list: TravelPackage[], state: string) {
+  return list.filter((p) => p.state === state);
+}
+
+export function getStateSummary(list: TravelPackage[], state: string) {
+  const statePackages = getPackagesByState(list, state);
   const temples = Array.from(new Set(statePackages.flatMap((p) => p.temples)));
   const treks = Array.from(
     new Set(statePackages.filter((p) => p.category.includes("trekking")).map((p) => p.title))
   );
+  const dates = Array.from(new Set(statePackages.flatMap(getDepartureLabels)));
   return {
     tripCount: statePackages.length,
     temples,
     treks,
-    upcomingDates: upcomingDates.slice(0, 3),
+    upcomingDates: dates.slice(0, 3),
   };
 }

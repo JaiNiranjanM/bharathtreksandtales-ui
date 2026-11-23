@@ -1,0 +1,15 @@
+rules_version = '2';
+// Replace the email below with your ADMIN_EMAIL.
+// Photos are served via download-token URLs, which work without read access here.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /trips/{tripId}/{folder}/{fileName} {
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com"
+        && request.resource.size < 25 * 1024 * 1024
+        && folder in ["source", "photos"];
+      allow read: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+  }
+}

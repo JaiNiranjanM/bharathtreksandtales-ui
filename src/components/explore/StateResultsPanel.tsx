@@ -3,9 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, Calendar, Sparkles } from "lucide-react";
 import { getPackagesByState, getStateSummary } from "@/lib/data";
+import { usePackages } from "@/components/packages/PackagesProvider";
 import { PackageCard } from "@/components/packages/PackageCard";
 
 export function StateResultsPanel({ state }: { state: string | null }) {
+  const packages = usePackages();
   if (!state) {
     return (
       <motion.div
@@ -23,8 +25,8 @@ export function StateResultsPanel({ state }: { state: string | null }) {
     );
   }
 
-  const trips = getPackagesByState(state);
-  const summary = getStateSummary(state);
+  const trips = getPackagesByState(packages, state);
+  const summary = getStateSummary(packages, state);
 
   return (
     <AnimatePresence mode="wait">
