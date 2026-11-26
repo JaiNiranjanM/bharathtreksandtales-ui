@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { MapPin, Calendar, Users } from "lucide-react";
-import type { CompletedTrip } from "@/lib/completedTrips";
+import { formatGroups, isHotlinkedPhoto, type CompletedTrip } from "@/lib/completedTrips";
 import { Badge } from "@/components/ui/badge";
 
 export function PastTripCard({ trip, index = 0 }: { trip: CompletedTrip; index?: number }) {
@@ -22,6 +22,7 @@ export function PastTripCard({ trip, index = 0 }: { trip: CompletedTrip; index?:
           src={trip.image}
           alt={trip.title}
           fill
+          unoptimized={isHotlinkedPhoto(trip.image)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
@@ -51,7 +52,7 @@ export function PastTripCard({ trip, index = 0 }: { trip: CompletedTrip; index?:
         </Link>
 
         <p className="mt-2 flex items-center gap-1.5 text-xs opacity-70">
-          <Users size={12} /> Groups from {trip.groupsFrom.join(" & ")}
+          <Users size={12} /> Groups from {formatGroups(trip.groupsFrom)}
         </p>
 
         <p className="mt-3 line-clamp-2 flex-1 text-xs opacity-70">{trip.highlights[0]}</p>

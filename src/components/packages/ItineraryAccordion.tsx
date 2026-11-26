@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import type { TripDay } from "@/lib/data";
+import { scheduleToText, type TripDay } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 /** Day-by-day itinerary as expandable cards. The first day starts open. */
@@ -57,27 +57,11 @@ export function ItineraryAccordion({ days }: { days: TripDay[] }) {
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="pb-2 pl-3 pr-3 pt-3 sm:pl-24 sm:pr-4">
-                    {d.description && (
-                      <p className="text-sm leading-relaxed opacity-75">{d.description}</p>
-                    )}
-                    {d.schedule.length > 0 && (
-                      <ul className={cn("space-y-3 border-l-2 border-foreground/10 pl-4", d.description && "mt-4")}>
-                        {d.schedule.map((s, k) => (
-                          <li key={k} className="relative text-sm">
-                            <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full border-2 border-saffron bg-background" />
-                            {s.time && (
-                              <p className="text-xs font-semibold uppercase tracking-wide text-royal-light">
-                                {s.time}
-                              </p>
-                            )}
-                            <p className="opacity-85">{s.activity}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                  <div className="space-y-3 pb-2 pl-3 pr-3 pt-4 text-base leading-8 opacity-70 sm:pl-24 sm:pr-4">
+                    {d.description && <p>{d.description}</p>}
+                    {d.schedule.length > 0 && <p>{scheduleToText(d.schedule)}</p>}
                     {!d.description && d.schedule.length === 0 && (
-                      <p className="text-sm opacity-50">Details for this day will be shared soon.</p>
+                      <p className="opacity-70">Details for this day will be shared soon.</p>
                     )}
                   </div>
                 </motion.div>

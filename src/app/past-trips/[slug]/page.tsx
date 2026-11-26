@@ -7,10 +7,14 @@ import { Footer } from "@/components/layout/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PastTripCard } from "@/components/past-trips/PastTripCard";
+import { ItineraryAccordion } from "@/components/packages/ItineraryAccordion";
 import {
   completedTrips,
+  formatGroups,
   getCompletedTripBySlug,
+  isHotlinkedPhoto,
   getSortedCompletedTrips,
+  getTripDays,
 } from "@/lib/completedTrips";
 
 export function generateStaticParams() {
@@ -35,7 +39,15 @@ export default async function PastTripDetailPage({
       <Header />
       <main className="flex-1">
         <section className="relative h-[55vh] min-h-[420px] w-full overflow-hidden">
-          <Image src={trip.image} alt={trip.title} fill priority className="object-cover" sizes="100vw" />
+          <Image
+            src={trip.image}
+            alt={trip.title}
+            fill
+            priority
+            unoptimized={isHotlinkedPhoto(trip.image)}
+            className="object-cover"
+            sizes="100vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
           <div className="absolute inset-x-0 bottom-0 mx-auto max-w-5xl px-6 pb-8">
             <Badge variant="forest" className="bg-forest text-white">
@@ -59,7 +71,14 @@ export default async function PastTripDetailPage({
           <div className="grid grid-cols-3 gap-3">
             {trip.gallery.map((src, i) => (
               <div key={i} className="relative aspect-video overflow-hidden rounded-xl">
-                <Image src={src} alt={`${trip.title} photo ${i + 1}`} fill sizes="33vw" className="object-cover" />
+                <Image
+                  src={src}
+                  alt={`${trip.title} photo ${i + 1}`}
+                  fill
+                  sizes="33vw"
+                  unoptimized={isHotlinkedPhoto(src)}
+                  className="object-cover"
+                />
               </div>
             ))}
           </div>
@@ -68,7 +87,7 @@ export default async function PastTripDetailPage({
         <div className="mx-auto max-w-5xl space-y-12 px-6 pb-20">
           <section className="grid grid-cols-2 gap-4 rounded-2xl border border-foreground/10 bg-surface p-5 sm:grid-cols-4">
             <Fact icon={Calendar} label="Duration" value={trip.durationLabel} />
-            <Fact icon={Users} label="Groups From" value={trip.groupsFrom.join(" & ")} />
+            <Fact icon={Users} label="Groups From" value={formatGroups(trip.groupsFrom)} />
             <Fact icon={Wallet} label="Cost" value={trip.costLabel} />
             <Fact icon={CheckCircle2} label="Organizer" value={trip.organizer} />
           </section>
@@ -96,24 +115,24 @@ export default async function PastTripDetailPage({
 
           <section>
             <h2 className="font-heading text-2xl font-bold">How the Trip Went</h2>
-            <div className="mt-6 space-y-8 border-l-2 border-foreground/10 pl-6">
-              {trip.itinerary.map((day) => (
-                <div key={day.day} className="relative">
-                  <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-royal bg-surface" />
-                  <p className="text-xs font-semibold uppercase tracking-wide text-royal-light">
-                    {day.day} — {day.date}
-                  </p>
-                  <ul className="mt-2 space-y-1.5">
-                    {day.activities.map((activity, i) => (
-                      <li key={i} className="text-sm opacity-80">
-                        {activity}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <ItineraryAccordion days={getTripDays(trip)} />
           </section>
+
+          {trip.photoCredits && trip.photoCredits.length > 0 && (
+            <details className="group text-xs opacity-60">
+              <summary className="cursor-pointer select-none font-medium hover:opacity-100">Photo credits</summary>
+              <ul className="mt-2 space-y-1">
+                {trip.photoCredits.map((c) => (
+                  <li key={c.url}>
+                    <a href={c.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+                      {c.title}
+                    </a>{" "}
+                    by {c.author}, {c.license}, via Wikimedia Commons
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
 
           <section className="rounded-2xl bg-gradient-to-br from-royal via-royal to-forest p-8 text-center text-white">
             <h3 className="font-heading text-xl font-bold">Want a trip like this?</h3>

@@ -1,9 +1,24 @@
-import type { CategoryId, Difficulty } from "./data";
+import { joinSentences, type CategoryId, type Difficulty, type TripDay } from "./data";
+import { trips2025 } from "./pastTrips/trips2025";
+import { trips2026 } from "./pastTrips/trips2026";
+import { photoCredits } from "./pastTrips/photoCredits";
 
 export interface ItineraryDay {
   day: string; // e.g. "Day 1"
   date: string; // e.g. "11th April 2025, Friday"
   activities: string[];
+}
+
+/** Attribution for one photo (Wikimedia Commons). Order: cover first, then the three gallery photos. */
+export interface PhotoCredit {
+  /** What the photo shows / its file name */
+  title: string;
+  author: string;
+  license: string;
+  /** Page of the photo with full licence and author details */
+  url: string;
+  /** Direct address of the photo; browsers load it straight from Wikimedia */
+  src: string;
 }
 
 export interface CompletedTrip {
@@ -17,7 +32,8 @@ export interface CompletedTrip {
   startDate: string; // ISO date, used for sorting
   datesLabel: string; // human readable e.g. "11 - 13 April 2025"
   durationLabel: string;
-  difficulty: Difficulty;
+  /** Not shown anywhere yet; left out for trips where no difficulty was recorded. */
+  difficulty?: Difficulty;
   groupsFrom: string[];
   costLabel: string;
   image: string;
@@ -25,9 +41,28 @@ export interface CompletedTrip {
   temples: string[];
   highlights: string[];
   itinerary: ItineraryDay[];
+  /** Credits for the cover and gallery photos, when they are real photos of the place. */
+  photoCredits?: PhotoCredit[];
 }
 
-export const completedTrips: CompletedTrip[] = [
+/** The trip report's days in the shape the day-card accordion expects. */
+export function getTripDays(trip: CompletedTrip): TripDay[] {
+  return trip.itinerary.map((d, i) => ({
+    day: Number(/\d+/.exec(d.day)?.[0] ?? i + 1),
+    title: d.date,
+    description: joinSentences(d.activities),
+    schedule: [],
+  }));
+}
+
+/** "Chennai", "Chennai & Bengaluru", "Chennai, Bengaluru & Salem" */
+export function formatGroups(list: string[]) {
+  if (list.length <= 1) return list.join("");
+  return `${list.slice(0, -1).join(", ")} & ${list[list.length - 1]}`;
+}
+
+// Trips from the 2025 and 2026 itinerary documents live in ./pastTrips/.
+const earlierTrips: CompletedTrip[] = [
   {
     id: "ct1",
     slug: "saduragiri-trekking-2025",
@@ -152,6 +187,24 @@ export const completedTrips: CompletedTrip[] = [
     ],
   },
 ];
+
+/** True for photos loaded straight from Wikimedia (shown unoptimised so visitors' browsers fetch them). */
+export const isHotlinkedPhoto = (src: string) => src.startsWith("https://upload.wikimedia.org/");
+
+// Real photos of each place come from ./pastTrips/photoCredits.ts. Trips without an entry there
+// keep the placeholder photos from their data entry.
+function withPhotos(trip: CompletedTrip): CompletedTrip {
+  const credits = photoCredits[trip.slug];
+  if (!credits) return trip;
+  return {
+    ...trip,
+    image: credits[0].src,
+    gallery: credits.slice(1, 4).map((c) => c.src),
+    photoCredits: credits,
+  };
+}
+
+export const completedTrips: CompletedTrip[] = [...earlierTrips, ...trips2025, ...trips2026].map(withPhotos);
 
 export function getCompletedTripBySlug(slug: string) {
   return completedTrips.find((t) => t.slug === slug);

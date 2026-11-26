@@ -666,3 +666,17 @@ export function flattenItineraryDays(days: TripDay[]): { time: string; activity:
     ...d.schedule.map((s) => ({ time: `Day ${d.day} · ${s.time}`.trim(), activity: s.activity })),
   ]);
 }
+
+/** Joins short fragments into one flowing paragraph, making sure each ends with a full stop. */
+export function joinSentences(parts: string[]) {
+  return parts
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => (/[.!?]$/.test(p) ? p : `${p}.`))
+    .join(" ");
+}
+
+/** A day's timed schedule written out as prose, e.g. "6:00 AM: Pickup. 2:00 PM: Summit." */
+export function scheduleToText(schedule: TripDay["schedule"]) {
+  return joinSentences(schedule.map((s) => (s.time ? `${s.time}: ${s.activity}` : s.activity)));
+}

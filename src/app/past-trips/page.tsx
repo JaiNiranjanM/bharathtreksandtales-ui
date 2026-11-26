@@ -1,6 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { PastTripCard } from "@/components/past-trips/PastTripCard";
+import { PastTripsExplorer } from "@/components/past-trips/PastTripsExplorer";
 import { getSortedCompletedTrips } from "@/lib/completedTrips";
 
 export default function PastTripsPage() {
@@ -24,11 +24,7 @@ export default function PastTripsPage() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {trips.map((trip, i) => (
-              <PastTripCard key={trip.id} trip={trip} index={i} />
-            ))}
-          </div>
+          <PastTripsExplorer trips={trips} />
         </div>
       </main>
       <Footer />
