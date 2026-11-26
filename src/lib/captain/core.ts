@@ -59,6 +59,10 @@ export interface BatchDoc {
   joinOpen: boolean;
   /** Self-registered travellers still waiting for BTT to confirm them. */
   pendingCount: number;
+  /** Seats on this departure. null means no limit. */
+  capacity: number | null;
+  /** How many people are on the batch (pending and confirmed); each one holds a seat. */
+  travellerCount: number;
   /** Set when BTT gives the captains access; cleared when BTT takes it back. */
   accessGrantedAt: number | null;
   settledAt: number | null;
@@ -206,6 +210,10 @@ export function computeAccess(
     : "details_locked";
   return { granted, settled, travellers, expenses, state };
 }
+
+/** Seats still free on a batch, or null when there is no limit. */
+export const seatsLeft = (batch: Pick<BatchDoc, "capacity" | "travellerCount">) =>
+  batch.capacity === null ? null : Math.max(0, batch.capacity - batch.travellerCount);
 
 /** Whether the registration link currently accepts details: it must exist, be switched on, and the trip not be over. */
 export function registrationOpen(

@@ -45,6 +45,12 @@ Each time a trip runs, create a **batch** (one departure) and give it a **captai
 - **Access:** captains see nothing until you click **Give captains access** (the page suggests 3 days before departure). Traveller details lock 2 days after the trip's last day, or as soon as you mark the trip settled. Expense upload stays open until you settle.
 - **Money:** record the advance you give the captain. The captain adds each expense with a category, amount, date and bill photos or PDFs. You approve (fully or partly) or reject each claim with a note. The page works out who owes whom, and you record the settlement payment before marking the trip settled.
 
+**Seats.** The "Seats per departure date" on a trip is the number of seats on *each* of its dates. A seat is held the moment someone books or registers, so a date cannot be oversold (the check and the save happen together). People you add or import take seats too. A full date shows as sold out with a waiting-list message; delete a pending person and their seat is freed. The trip page shows live seats left for the date you pick. Change a batch's seats on its page (leave blank for no limit).
+
+**Alerts.** When someone books or registers, you get a short message with the trip, date, number of travellers, who booked, a reference, seats left and a link to confirm them. It is sent after the visitor already has their answer, and a failed alert never affects them. Turn on either or both by setting the keys in `.env.local` (see `.env.example`):
+- **Email** (easiest): create a free account at resend.com, make an API key, and set `RESEND_API_KEY`. Until you verify your own domain there, Resend only delivers to your own account email, so set `ALERT_EMAIL_TO` to that address; after verifying a domain, set `ALERT_EMAIL_FROM` and send to any address.
+- **WhatsApp**: needs a Meta WhatsApp Business account. Create a *Utility* message template whose body is just `{{1}}`, get it approved, then set `WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ALERT_TO` (your number, with country code) and `WHATSAPP_TEMPLATE_NAME`. This takes longer to set up than email.
+
 Code: `src/lib/captain/` (rules, database access, bill upload), `src/app/api/admin/{captains,batches}`, `src/app/api/captain`, `src/app/captain`, `src/app/admin/(panel)/{captains,batches}`.
 Everything is read and written on the server. Bill files are private and are shown through links that expire after 20 minutes. No new Firebase setup is needed.
 

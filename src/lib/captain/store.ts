@@ -20,9 +20,16 @@ const withId = <T extends { id: string }>(d: FirebaseFirestore.QueryDocumentSnap
   ({ ...(d.data() as Omit<T, "id">), id: d.id }) as T;
 
 /** Batches saved before registration existed lack these fields; give them safe defaults. */
-const asBatch = (d: FirebaseFirestore.QueryDocumentSnapshot | FirebaseFirestore.DocumentSnapshot): BatchDoc => {
+export const asBatch = (d: FirebaseFirestore.QueryDocumentSnapshot | FirebaseFirestore.DocumentSnapshot): BatchDoc => {
   const b = withId<BatchDoc>(d);
-  return { ...b, joinToken: b.joinToken ?? null, joinOpen: b.joinOpen ?? false, pendingCount: b.pendingCount ?? 0 };
+  return {
+    ...b,
+    joinToken: b.joinToken ?? null,
+    joinOpen: b.joinOpen ?? false,
+    pendingCount: b.pendingCount ?? 0,
+    capacity: b.capacity ?? null,
+    travellerCount: b.travellerCount ?? 0,
+  };
 };
 
 /** Travellers saved before registration existed were added by BTT, so they count as confirmed. */
@@ -68,10 +75,20 @@ export async function findBatchForTripDate(tripId: string, startDate: string): P
   return snap.empty ? null : asBatch(snap.docs[0]);
 }
 
-/** Re-counts the travellers waiting for confirmation and stores the number on the batch. */
-export async function refreshPendingCount(batchId: string) {
-  const agg = await batchRef(batchId).collection("travellers").where("status", "==", "pending").count().get();
-  await batchRef(batchId).update({ pendingCount: agg.data().count });
+/** Every batch for one trip (a few at most), so a trip page can show seats left per date. */
+export async function listBatchesForTrip(tripId: string): Promise<BatchDoc[]> {
+  const snap = await batchesCol().where("tripId", "==", tripId).get();
+  return snap.docs.map(asBatch);
+}
+
+/**
+ * Re-counts the people on a batch (each holds a seat) and those still waiting for confirmation, and stores both
+ * numbers on the batch. Call after any change to the traveller list.
+ */
+export async function refreshTravellerCounts(batchId: string) {
+  const col = batchRef(batchId).collection("travellers");
+  const [all, pending] = await Promise.all([col.count().get(), col.where("status", "==", "pending").count().get()]);
+  await batchRef(batchId).update({ travellerCount: all.data().count, pendingCount: pending.data().count });
 }
 
 /** `onlyConfirmed`: captains must never see people BTT has not confirmed yet. */

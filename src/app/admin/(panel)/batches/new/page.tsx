@@ -19,6 +19,7 @@ export default async function NewBatchPage() {
       title: t.title ?? "",
       location: t.location ?? "",
       durationDays: t.durationDays ?? 1,
+      seats: t.seatsLeft ?? 0,
       departures: (t.departures ?? []).filter((d) => d >= today).sort(),
     }));
 

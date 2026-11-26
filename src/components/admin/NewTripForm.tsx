@@ -153,7 +153,7 @@ export function NewTripForm() {
               className={inputClass}
             />
           </Field>
-          <Field label="Seats available">
+          <Field label="Seats per departure date" hint="Each date has this many seats">
             <input type="number" min={0} value={seats} onChange={(e) => setSeats(e.target.value)} className={inputClass} />
           </Field>
         </div>

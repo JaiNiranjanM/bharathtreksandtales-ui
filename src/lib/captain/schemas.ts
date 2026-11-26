@@ -20,6 +20,8 @@ export const batchInputSchema = z
     endDate: ymd,
     captainUids: z.array(z.string().min(1)).max(6).default([]),
     notes: s.max(1000).default(""),
+    /** Seats on this departure; null means no limit. */
+    capacity: z.number().int().min(0).max(1000).nullable().default(null),
   })
   .refine((d) => d.endDate >= d.startDate, {
     message: "The last day can't be before the first day",

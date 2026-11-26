@@ -43,6 +43,7 @@ export function RegistrationForm({
   initialPeople,
   withContact,
   successText,
+  maxPeople = MAX_PEOPLE_PER_SUBMISSION,
 }: {
   endpoint: string;
   /** Fields the server needs besides the form, e.g. the trip and date for a booking. */
@@ -52,10 +53,13 @@ export function RegistrationForm({
   /** A booking asks who is booking; a registration link does not (the first traveller is the contact). */
   withContact: boolean;
   successText: string;
+  /** Most people this submission may include (for example the seats left on the date). */
+  maxPeople?: number;
 }) {
+  const limit = Math.max(1, Math.min(maxPeople, MAX_PEOPLE_PER_SUBMISSION));
   const [contact, setContact] = useState({ name: "", phone: "", email: "" });
   const [people, setPeople] = useState<Person[]>(() =>
-    Array.from({ length: Math.min(Math.max(initialPeople, 1), MAX_PEOPLE_PER_SUBMISSION) }, () => ({ ...EMPTY_PERSON }))
+    Array.from({ length: Math.min(Math.max(initialPeople, 1), limit) }, () => ({ ...EMPTY_PERSON }))
   );
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot: hidden from people, filled in by bots
@@ -207,7 +211,7 @@ export function RegistrationForm({
         </section>
       ))}
 
-      {people.length < MAX_PEOPLE_PER_SUBMISSION && (
+      {people.length < limit && (
         <button
           type="button"
           onClick={() => setPeople((cur) => [...cur, { ...EMPTY_PERSON }])}

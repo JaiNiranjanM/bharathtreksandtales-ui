@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FileDown, Minus, Phone, Plus, ShieldCheck, Tag } from "lucide-react";
 import Link from "next/link";
@@ -16,11 +16,26 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [pickup, setPickup] = useState(pkg.pickupLocations[0]);
   const [seats, setSeats] = useState(1);
+  const [seatsMap, setSeatsMap] = useState<Record<string, number | null>>({});
+
+  // Live seat counts for each date (the page itself is cached, so these are fetched fresh).
+  useEffect(() => {
+    if (!options.some((o) => o.iso)) return;
+    fetch(`/api/public/trips/${pkg.id}/seats`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setSeatsMap(d.seats ?? {}))
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pkg.id]);
   const [coupon, setCoupon] = useState("");
   const [applied, setApplied] = useState(false);
 
   // Trips with real departure dates take bookings online; the older sample trips send an enquiry instead.
   const selectedIso = options.find((o) => o.label === selectedDate)?.iso ?? null;
+  // Seats left on a date: the live count when we have one, otherwise the trip's seat count. null = no limit.
+  const leftOn = (iso: string | null) => (iso && iso in seatsMap ? seatsMap[iso] : pkg.seatsLeft);
+  const left = leftOn(selectedIso);
+  const maxSeats = Math.max(1, Math.min(left ?? 8, 8));
   const total = pkg.discountPrice * seats;
   const discount = (pkg.price - pkg.discountPrice) * seats;
   const couponDiscount = applied ? Math.round(total * 0.05) : 0;
@@ -41,8 +56,10 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
         <span className="text-xs opacity-60">/person</span>
       </div>
 
-      {pkg.seatsLeft <= 6 && (
-        <p className="mt-1 text-xs font-medium text-saffron">Only {pkg.seatsLeft} seats left!</p>
+      {left !== null && left <= 6 && (
+        <p className="mt-1 text-xs font-medium text-saffron">
+          {left === 0 ? "Sold out for this date" : `Only ${left} ${left === 1 ? "seat" : "seats"} left!`}
+        </p>
       )}
 
       <div className="mt-5">
@@ -53,7 +70,11 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
           {dates.map((d) => (
             <button
               key={d}
-              onClick={() => setSelectedDate(d)}
+              onClick={() => {
+                setSelectedDate(d);
+                const cap = leftOn(options.find((o) => o.label === d)?.iso ?? null);
+                setSeats((s) => Math.max(1, Math.min(s, cap ?? 8, 8)));
+              }}
               className={cn(
                 "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
                 selectedDate === d
@@ -97,7 +118,7 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
           </button>
           <span className="w-6 text-center text-sm font-semibold">{seats}</span>
           <button
-            onClick={() => setSeats((s) => Math.min(pkg.seatsLeft, s + 1))}
+            onClick={() => setSeats((s) => Math.min(maxSeats, s + 1))}
             className="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/15 hover:bg-foreground/5 cursor-pointer"
           >
             <Plus size={14} />
@@ -154,21 +175,33 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
         </div>
       </div>
 
-      <Button asChild variant="saffron" size="lg" className="mt-5 w-full">
-        {selectedIso ? (
-          <Link href={`/packages/${pkg.slug}/book?date=${selectedIso}&seats=${seats}`}>Book Now</Link>
-        ) : (
+      {left === 0 ? (
+        <Button asChild variant="outline" size="lg" className="mt-5 w-full">
           <a
-            href={whatsappLink(
-              `Hi Bharath Treks & Tales, I'd like to book "${pkg.title}" on ${selectedDate} for ${seats} ${seats === 1 ? "person" : "people"}.`
-            )}
+            href={whatsappLink(`Hi Bharath Treks & Tales, "${pkg.title}" on ${selectedDate} is sold out. Please add me to the waiting list.`)}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Book Now
+            Sold out · Join the waiting list
           </a>
-        )}
-      </Button>
+        </Button>
+      ) : (
+        <Button asChild variant="saffron" size="lg" className="mt-5 w-full">
+          {selectedIso ? (
+            <Link href={`/packages/${pkg.slug}/book?date=${selectedIso}&seats=${seats}`}>Book Now</Link>
+          ) : (
+            <a
+              href={whatsappLink(
+                `Hi Bharath Treks & Tales, I'd like to book "${pkg.title}" on ${selectedDate} for ${seats} ${seats === 1 ? "person" : "people"}.`
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Book Now
+            </a>
+          )}
+        </Button>
+      )}
 
       <div className="mt-3 space-y-2.5">
         <a

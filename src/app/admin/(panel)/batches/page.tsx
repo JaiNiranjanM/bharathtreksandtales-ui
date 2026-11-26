@@ -49,6 +49,9 @@ export default async function BatchesPage() {
                         <span className="flex items-center gap-1">
                           <Users size={13} /> {captainNames || "No captain assigned"}
                         </span>
+                        <span>
+                          {b.travellerCount} {b.capacity !== null ? `of ${b.capacity} ` : ""}seats taken
+                        </span>
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">

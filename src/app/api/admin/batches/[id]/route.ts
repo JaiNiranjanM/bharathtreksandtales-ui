@@ -5,6 +5,7 @@ import {
   batchRef,
   deleteBatchCompletely,
   getBatch,
+  refreshTravellerCounts,
   listAdvances,
   listCaptains,
   listExpenseDocs,
@@ -47,6 +48,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const known = new Set((await listCaptains()).map((c) => c.uid));
       if (body.batch.captainUids.some((u) => !known.has(u))) return fail("Pick captains from the list.");
       await batchRef(id).update({ ...body.batch, updatedAt: now });
+      // Batches made before seat counting existed get their counts filled in here.
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true });
     }
     case "createJoinLink":

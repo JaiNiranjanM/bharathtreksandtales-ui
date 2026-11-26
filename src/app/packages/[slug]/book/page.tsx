@@ -7,7 +7,8 @@ import { Footer } from "@/components/layout/Footer";
 import { RegistrationForm } from "@/components/registration/RegistrationForm";
 import { Button } from "@/components/ui/button";
 import { whatsappLink } from "@/lib/contact";
-import { prettyDate } from "@/lib/captain/core";
+import { prettyDate, seatsLeft } from "@/lib/captain/core";
+import { findBatchForTripDate } from "@/lib/captain/store";
 import { getPackageBySlug } from "@/lib/trips";
 import { formatINR } from "@/lib/utils";
 
@@ -32,7 +33,11 @@ export default async function BookPage({
 
   const today = new Date().toISOString().slice(0, 10);
   const open = Boolean(pkg.departures?.includes(date)) && date >= today;
-  const seats = Math.min(8, Math.max(1, Number(seatsParam) || 1));
+  // Seats left on this date: the batch's own count if it exists, otherwise the trip's full seat count.
+  const batch = open ? await findBatchForTripDate(pkg.id, date) : null;
+  const left = !open ? null : batch ? seatsLeft(batch) : pkg.seatsLeft;
+  const soldOut = open && left === 0;
+  const seats = Math.min(8, Math.max(1, Number(seatsParam) || 1), left ?? 8);
 
   return (
     <>
@@ -43,7 +48,28 @@ export default async function BookPage({
             <ArrowLeft size={15} /> Back to the trip
           </Link>
 
-          {!open ? (
+          {soldOut ? (
+            <div className="rounded-2xl border border-foreground/10 bg-surface p-8">
+              <h1 className="font-heading text-2xl font-bold">This date is sold out</h1>
+              <p className="mt-2 text-sm opacity-70">
+                All seats on {prettyDate(date)} are taken. You can pick another date, or message us to join the waiting list.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Button asChild variant="outline">
+                  <Link href={`/packages/${slug}`}>Choose another date</Link>
+                </Button>
+                <Button asChild variant="saffron">
+                  <a
+                    href={whatsappLink(`Hi Bharath Treks & Tales, "${pkg.title}" on ${prettyDate(date)} is sold out. Please add me to the waiting list.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Join the waiting list
+                  </a>
+                </Button>
+              </div>
+            </div>
+          ) : !open ? (
             <div className="rounded-2xl border border-foreground/10 bg-surface p-8">
               <h1 className="font-heading text-2xl font-bold">Online booking is not open for this date yet</h1>
               <p className="mt-2 text-sm opacity-70">
@@ -78,6 +104,11 @@ export default async function BookPage({
                   {seats} {seats === 1 ? "seat" : "seats"} × {formatINR(pkg.discountPrice)} ={" "}
                   <strong>{formatINR(pkg.discountPrice * seats)}</strong>
                 </p>
+                {left !== null && left <= 6 && (
+                  <p className="mt-2 text-xs font-medium text-saffron">
+                    Only {left} {left === 1 ? "seat" : "seats"} left on this date.
+                  </p>
+                )}
                 <p className="mt-1 text-xs opacity-60">
                   Nothing is charged on this page. Send your details and BTT will contact you to confirm your seats and share how to pay.
                 </p>
@@ -89,6 +120,7 @@ export default async function BookPage({
                   extra={{ tripId: pkg.id, date }}
                   pickupOptions={pkg.pickupLocations}
                   initialPeople={seats}
+                  maxPeople={left ?? 8}
                   withContact
                   successText="Thank you! BTT will contact you shortly to confirm your seats and share payment details. No payment has been taken yet."
                 />

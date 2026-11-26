@@ -15,6 +15,8 @@ export interface TripOption {
   durationDays: number;
   /** Upcoming departure dates (YYYY-MM-DD) */
   departures: string[];
+  /** Seats per departure, from the trip */
+  seats: number;
 }
 
 /** Create a batch (one run of a trip), or edit its basics and captains. */
@@ -35,6 +37,7 @@ export function BatchForm({
   const [endDate, setEndDate] = useState(batch?.endDate ?? "");
   const [captainUids, setCaptainUids] = useState<string[]>(batch?.captainUids ?? []);
   const [notes, setNotes] = useState(batch?.notes ?? "");
+  const [capacity, setCapacity] = useState(batch?.capacity === null || batch === undefined ? "" : String(batch.capacity));
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -45,6 +48,7 @@ export function BatchForm({
     if (!t) return;
     setTripTitle(t.title);
     setLocation(t.location);
+    setCapacity(String(t.seats));
     const start = t.departures[0];
     if (start) {
       setStartDate(start);
@@ -57,7 +61,16 @@ export function BatchForm({
     setError("");
     setSaved(false);
     setBusy(true);
-    const body = { tripId, tripTitle, location, startDate, endDate, captainUids, notes };
+    const body = {
+      tripId,
+      tripTitle,
+      location,
+      startDate,
+      endDate,
+      captainUids,
+      notes,
+      capacity: capacity.trim() === "" ? null : Number(capacity),
+    };
     try {
       if (batch) {
         await api(`/api/admin/batches/${batch.id}`, "POST", { action: "update", batch: body });
@@ -115,6 +128,9 @@ export function BatchForm({
             <input required type="date" min={startDate} value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
           </Field>
         </div>
+        <Field label="Seats on this departure" hint="Each booking or registration takes a seat. Leave blank for no limit. People you add yourself take seats too.">
+          <input type="number" min={0} max={1000} value={capacity} onChange={(e) => setCapacity(e.target.value)} className={inputClass} />
+        </Field>
         <Field label="Notes for the captain (optional)" hint="Meeting point, reporting time, anything they should know. Shown on their page.">
           <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={inputClass} />
         </Field>

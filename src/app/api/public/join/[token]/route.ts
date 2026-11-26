@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { registrationOpen } from "@/lib/captain/core";
-import { fail, zodMessage } from "@/lib/captain/http";
+import { fail, siteOrigin, zodMessage } from "@/lib/captain/http";
 import { clientIp, rateLimited } from "@/lib/captain/rateLimit";
 import { RegistrationError, registerTravellers } from "@/lib/captain/registration";
 import { joinSubmitSchema } from "@/lib/captain/schemas";
 import { getBatchByJoinToken } from "@/lib/captain/store";
 import { isFirebaseConfigured } from "@/lib/firebase/admin";
+import { notifyRegistration } from "@/lib/notify";
 
 /** Someone fills in their details through a batch's registration link. Saved as pending until BTT confirms. */
 export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
@@ -33,6 +34,21 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
       contact: { name: first.name, phone: first.phone, email: "" },
       travellers: parsed.data.travellers,
     });
+    if (result.added > 0) {
+      const adminUrl = `${siteOrigin(request)}/admin/batches/${batch.id}`;
+      after(() =>
+        notifyRegistration({
+          source: "link",
+          tripTitle: batch.tripTitle,
+          date: batch.startDate,
+          count: result.added,
+          contactName: first.name,
+          ref: result.ref,
+          seatsLeft: result.seatsLeft,
+          adminUrl,
+        })
+      );
+    }
     return NextResponse.json(result);
   } catch (err) {
     if (err instanceof RegistrationError) return fail(err.message, 409);

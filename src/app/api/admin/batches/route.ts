@@ -17,6 +17,7 @@ export async function POST(request: Request) {
   const now = Date.now();
   await batchRef(ref.id).set({
     ...parsed.data,
+    travellerCount: 0,
     joinToken: null,
     joinOpen: false,
     pendingCount: 0,

@@ -57,6 +57,10 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
               <MapPin size={14} /> {batch.location}
             </span>
           )}
+          <span>
+            {travellers.length} {batch.capacity !== null ? `of ${batch.capacity} ` : ""}seats taken
+            {batch.capacity !== null && travellers.length >= batch.capacity && " (full)"}
+          </span>
         </p>
       </div>
 

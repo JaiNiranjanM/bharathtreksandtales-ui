@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
-import { fail, zodMessage } from "@/lib/captain/http";
+import { after, NextResponse } from "next/server";
+import { fail, siteOrigin, zodMessage } from "@/lib/captain/http";
 import { clientIp, rateLimited } from "@/lib/captain/rateLimit";
 import { RegistrationError, batchForBooking, registerTravellers } from "@/lib/captain/registration";
 import { bookSubmitSchema } from "@/lib/captain/schemas";
 import { isFirebaseConfigured } from "@/lib/firebase/admin";
+import { notifyRegistration } from "@/lib/notify";
 import { getTrip } from "@/lib/trips";
 
 /** The date today in India (YYYY-MM-DD). */
@@ -35,6 +36,22 @@ export async function POST(request: Request) {
     const batch = await batchForBooking(trip, date);
     if (batch.settledAt) return fail("Booking for this date has closed. Please contact BTT.", 409);
     const result = await registerTravellers(batch.id, { source: "website", contact, travellers });
+    if (result.added > 0) {
+      // Tell BTT after the visitor has their answer, so a slow email or WhatsApp never holds them up.
+      const adminUrl = `${siteOrigin(request)}/admin/batches/${batch.id}`;
+      after(() =>
+        notifyRegistration({
+          source: "website",
+          tripTitle: batch.tripTitle,
+          date: batch.startDate,
+          count: result.added,
+          contactName: contact.name,
+          ref: result.ref,
+          seatsLeft: result.seatsLeft,
+          adminUrl,
+        })
+      );
+    }
     return NextResponse.json(result);
   } catch (err) {
     if (err instanceof RegistrationError) return fail(err.message, 409);

@@ -502,7 +502,7 @@ function Editor({ trip, onSaved }: { trip: TripDoc; onSaved: (t: TripDoc) => voi
                   className={inputClass}
                 />
               </Field>
-              <Field label="Seats available">
+              <Field label="Seats per departure date" hint="Each date has this many seats">
                 <input
                   type="number"
                   min={0}

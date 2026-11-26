@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { travellerSchema } from "@/lib/captain/schemas";
-import { batchRef, getBatch, refreshPendingCount } from "@/lib/captain/store";
+import { batchRef, getBatch, refreshTravellerCounts } from "@/lib/captain/store";
 import { adminOnly, fail, zodMessage } from "@/lib/captain/http";
 import { adminDb } from "@/lib/firebase/admin";
 
@@ -40,11 +40,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   switch (body.action) {
     case "add":
       await col.add({ ...body.traveller, ...addedByBtt("admin"), createdAt: now });
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true });
     case "import": {
       const batch = adminDb().batch();
       body.rows.forEach((row) => batch.set(col.doc(), { ...row, ...addedByBtt("csv"), createdAt: now }));
       await batch.commit();
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true, imported: body.rows.length });
     }
     case "update":
@@ -52,18 +54,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json({ ok: true });
     case "delete":
       await col.doc(body.id).delete();
-      await refreshPendingCount(id);
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true });
     case "confirm":
       await col.doc(body.id).update({ status: "confirmed" });
-      await refreshPendingCount(id);
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true });
     case "confirmAll": {
       const pending = await col.where("status", "==", "pending").get();
       const writes = adminDb().batch();
       pending.docs.forEach((d) => writes.update(d.ref, { status: "confirmed" }));
       await writes.commit();
-      await refreshPendingCount(id);
+      await refreshTravellerCounts(id);
       return NextResponse.json({ ok: true, confirmed: pending.size });
     }
   }
