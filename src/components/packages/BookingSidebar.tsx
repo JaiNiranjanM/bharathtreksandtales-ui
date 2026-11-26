@@ -3,20 +3,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FileDown, Minus, Phone, Plus, ShieldCheck, Tag } from "lucide-react";
-import { getDepartureLabels, type TravelPackage } from "@/lib/data";
+import Link from "next/link";
+import { getDepartureOptions, type TravelPackage } from "@/lib/data";
 import { formatINR, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_E164, whatsappLink } from "@/lib/contact";
 
 export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
-  const dates = getDepartureLabels(pkg);
+  const options = getDepartureOptions(pkg);
+  const dates = options.map((o) => o.label);
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [pickup, setPickup] = useState(pkg.pickupLocations[0]);
   const [seats, setSeats] = useState(1);
   const [coupon, setCoupon] = useState("");
   const [applied, setApplied] = useState(false);
 
+  // Trips with real departure dates take bookings online; the older sample trips send an enquiry instead.
+  const selectedIso = options.find((o) => o.label === selectedDate)?.iso ?? null;
   const total = pkg.discountPrice * seats;
   const discount = (pkg.price - pkg.discountPrice) * seats;
   const couponDiscount = applied ? Math.round(total * 0.05) : 0;
@@ -150,8 +154,20 @@ export function BookingSidebar({ pkg }: { pkg: TravelPackage }) {
         </div>
       </div>
 
-      <Button variant="saffron" size="lg" className="mt-5 w-full">
-        Book Now
+      <Button asChild variant="saffron" size="lg" className="mt-5 w-full">
+        {selectedIso ? (
+          <Link href={`/packages/${pkg.slug}/book?date=${selectedIso}&seats=${seats}`}>Book Now</Link>
+        ) : (
+          <a
+            href={whatsappLink(
+              `Hi Bharath Treks & Tales, I'd like to book "${pkg.title}" on ${selectedDate} for ${seats} ${seats === 1 ? "person" : "people"}.`
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Book Now
+          </a>
+        )}
       </Button>
 
       <div className="mt-3 space-y-2.5">

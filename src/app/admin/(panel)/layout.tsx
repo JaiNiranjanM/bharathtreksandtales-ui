@@ -25,6 +25,12 @@ export default async function AdminPanelLayout({ children }: { children: React.R
             <Link href="/admin" className="rounded-full px-3 py-1.5 hover:bg-foreground/5">
               Trips
             </Link>
+            <Link href="/admin/batches" className="rounded-full px-3 py-1.5 hover:bg-foreground/5">
+              Batches
+            </Link>
+            <Link href="/admin/captains" className="rounded-full px-3 py-1.5 hover:bg-foreground/5">
+              Captains
+            </Link>
             <Link
               href="/admin/trips/new"
               className="flex items-center gap-1 rounded-full bg-royal px-3 py-1.5 text-white hover:bg-royal-light"

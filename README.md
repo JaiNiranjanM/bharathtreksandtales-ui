@@ -31,6 +31,23 @@ npm run dev                  # http://localhost:3000
 
 Code: `src/lib/ai/generateTrip.ts`, `src/app/api/admin/**`, `src/components/admin/**`, `src/lib/trips.ts`.
 
+## Trip captains & trip money
+
+Each time a trip runs, create a **batch** (one departure) and give it a **captain** who looks after the trip.
+
+- **Captains** (`/admin/captains`): create a login with the captain's email. The page gives you a link to send them; they use it to set their own password, then sign in at `/captain/login`. Switching a captain off signs them out straight away.
+- **Batches** (`/admin/batches`): pick the trip and dates and assign captains. Travellers get into a batch in four ways:
+  1. you add them one by one, 2. you import a CSV or paste from Excel (a template is provided),
+  3. they **book on the trip page** (the booking is saved against that trip and date; a batch is created automatically if there is none yet),
+  4. they open the batch's **registration link** (`/join/<code>`, created on the batch page and tied to that trip and date) and fill in their own details.
+  People who register themselves (3 and 4) are **Pending** until you confirm them; captains only ever see **Confirmed** travellers. A batch with people waiting shows "to confirm" in the list. The link can be switched off or replaced (the old one then stops working), and it closes by itself when the trip is over.
+  There are no payments on the site yet: a booking only saves the traveller's details, and BTT contacts them to confirm and collect payment.
+- **Access:** captains see nothing until you click **Give captains access** (the page suggests 3 days before departure). Traveller details lock 2 days after the trip's last day, or as soon as you mark the trip settled. Expense upload stays open until you settle.
+- **Money:** record the advance you give the captain. The captain adds each expense with a category, amount, date and bill photos or PDFs. You approve (fully or partly) or reject each claim with a note. The page works out who owes whom, and you record the settlement payment before marking the trip settled.
+
+Code: `src/lib/captain/` (rules, database access, bill upload), `src/app/api/admin/{captains,batches}`, `src/app/api/captain`, `src/app/captain`, `src/app/admin/(panel)/{captains,batches}`.
+Everything is read and written on the server. Bill files are private and are shown through links that expire after 20 minutes. No new Firebase setup is needed.
+
 ## One-time Firebase setup
 
 1. Create a project at https://console.firebase.google.com.

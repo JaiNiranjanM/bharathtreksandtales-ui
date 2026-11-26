@@ -596,6 +596,21 @@ export function getDepartureLabels(pkg: TravelPackage): string[] {
   return upcomingDates;
 }
 
+/**
+ * The dates shown on a trip page, each with its real date (YYYY-MM-DD) when the trip has its own departures.
+ * Older sample trips only have shared example labels, so their `iso` is null and they cannot take online bookings.
+ */
+export function getDepartureOptions(pkg: TravelPackage): { label: string; iso: string | null }[] {
+  if (pkg.departures && pkg.departures.length > 0) {
+    const today = new Date().toISOString().slice(0, 10);
+    return pkg.departures
+      .filter((d) => d >= today)
+      .sort()
+      .map((iso) => ({ label: formatDepartureDate(iso), iso }));
+  }
+  return upcomingDates.map((label) => ({ label, iso: null }));
+}
+
 // Maps the 2-letter state ids used by the @svg-maps/india dataset to state names.
 export const stateSvgIdToName: Record<string, string> = {
   an: "Andaman and Nicobar Islands", ap: "Andhra Pradesh", ar: "Arunachal Pradesh", as: "Assam",
