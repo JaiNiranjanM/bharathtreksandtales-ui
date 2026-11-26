@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   // `npm run dev` writes to its own folder so it can never wipe the production build in `.next`
   // (which would make `npm start` fail with "Could not find a production build").
   distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
+  // The dev server also gets its own tsconfig, so its generated types never mix with the production ones.
+  typescript: {
+    tsconfigPath: process.env.NODE_ENV === "development" ? "tsconfig.dev.json" : "tsconfig.json",
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
