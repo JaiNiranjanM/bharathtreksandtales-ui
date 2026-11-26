@@ -129,7 +129,7 @@ Rules:
 - Use the research notes only to fill facts the itinerary does not state (altitude, distance, weather, best season, temples, safety). Never invent prices, dates, phone numbers or availability.
 - If a fact is unknown after both sources, write a short honest value such as "Varies" rather than making one up; leave lists empty when there is nothing to add.
 - Write in clear, warm Indian English. Keep highlights and list items short (under ~12 words each).
-- Build the day-by-day itinerary from the organiser's schedule: one entry per day, in order, each with a short title and a 1-3 sentence description. A single-day trip has one entry. Put timed activities in that day's schedule only when the itinerary gives times; otherwise leave the schedule empty.
+- Build the day-by-day itinerary from the organiser's schedule: one entry per day, in order, each with a short title and a paragraph of 2-4 sentences describing the day in order. When the organiser's itinerary gives times (departures, arrivals, check-ins, trek start times, darshan slots), write those times into the day's paragraph exactly as given, beside the activity they belong to. Never invent or round a time; if no time is given for something, simply leave it out. A single-day trip has one entry.
 - Only list sources that appear in the research notes.`;
 
 /** Step 2: extract the page fields as validated JSON. */

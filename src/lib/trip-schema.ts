@@ -49,10 +49,11 @@ export const aiTripSchema = z.object({
       z.object({
         day: z.number().int().describe("Day number starting at 1"),
         title: z.string().describe("Short day title, e.g. 'Arrival in Sri Lanka' or 'Kandy & Temple of the Tooth'"),
-        description: z.string().describe("1-3 sentences describing the day"),
-        schedule: z
-          .array(z.object({ time: z.string(), activity: z.string() }))
-          .describe("Timed activities for the day if the itinerary gives times; otherwise empty"),
+        description: z
+          .string()
+          .describe(
+            "2-4 sentences as one flowing paragraph describing the day in order. When the itinerary gives times (departures, arrivals, check-ins, start times, darshan slots), write them into the paragraph exactly as given, next to the activity they belong to. Never invent a time."
+          ),
       })
     )
     .describe("One entry per day, in order. A single-day trip has exactly one entry."),

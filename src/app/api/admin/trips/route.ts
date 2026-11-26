@@ -66,9 +66,11 @@ export async function POST(request: Request) {
       });
       const { priceFromItinerary, departureDatesFromItinerary, ...content } = ai;
       const price = input.price || priceFromItinerary || 0;
+      const itineraryDays = content.itineraryDays.map((d) => ({ ...d, schedule: [] }));
       await ref.update({
         ...content,
-        itinerary: flattenItineraryDays(content.itineraryDays),
+        itineraryDays,
+        itinerary: flattenItineraryDays(itineraryDays),
         slug: await uniqueSlug(slugify(ai.title), input.id),
         price,
         discountPrice: input.discountPrice || price,

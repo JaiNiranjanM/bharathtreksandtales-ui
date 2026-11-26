@@ -15,6 +15,7 @@ export interface TripDoc extends Partial<TripInput> {
 }
 
 export function tripDocToPackage(doc: TripDoc): TravelPackage {
+  const days = (doc.itineraryDays ?? []).map((d) => ({ ...d, schedule: d.schedule ?? [] }));
   return {
     id: doc.id,
     slug: doc.slug ?? doc.id,
@@ -44,8 +45,8 @@ export function tripDocToPackage(doc: TripDoc): TravelPackage {
     weekend: doc.weekend ?? false,
     pickupLocations: doc.pickupLocations ?? [],
     tags: doc.tags ?? [],
-    itinerary: doc.itinerary?.length ? doc.itinerary : flattenItineraryDays(doc.itineraryDays ?? []),
-    itineraryDays: doc.itineraryDays,
+    itinerary: doc.itinerary?.length ? doc.itinerary : flattenItineraryDays(days),
+    itineraryDays: days.length ? days : undefined,
     inclusions: doc.inclusions ?? [],
     exclusions: doc.exclusions ?? [],
     thingsToCarry: doc.thingsToCarry ?? [],
